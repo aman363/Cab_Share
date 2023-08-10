@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "372277714565",
+    "project_id": "iitj-travel-e12d2",
+    "storage_bucket": "iitj-travel-e12d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372277714565:android:15d444a918dff6a65453ec",
+        "android_client_info": {
+          "package_name": "com.example.iitj_travel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372277714565-ds3nr5d2tga00vpivnaeru40uflhjda0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr3Nt7EFGiWsloHF7n0Go8MjFGgCQ-fLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372277714565-ds3nr5d2tga00vpivnaeru40uflhjda0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
