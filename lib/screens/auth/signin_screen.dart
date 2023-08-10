@@ -94,6 +94,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
                 reusableTextField("Enter Password", Icons.lock_outline, true,
                     _passwordTextController),
+                const SizedBox(
+                  height: 10,
+                ),
                 SizedBox(
                   width: double.infinity,
                   child: Text(
@@ -167,6 +170,11 @@ class _SignInScreenState extends State<SignInScreen> {
                         "[firebase_auth/user-not-found] There is no user record corresponding to this identifier. The user may have been deleted.") {
                       setState(() {
                         sr = "*User Not Found";
+                      });
+                    }
+                    else if (error.toString() =="[firebase_auth/invalid-email] The email address is badly formatted."){
+                      setState(() {
+                        sr = "*The email address is badly formatted";
                       });
                     }
                   });

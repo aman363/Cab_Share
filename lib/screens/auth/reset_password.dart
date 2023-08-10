@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitj_travel/screens/auth/signin_screen.dart';
 import '../reusable_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ class ResetPassword extends StatefulWidget {
 
 class _ResetPasswordState extends State<ResetPassword> {
   final TextEditingController _emailTextController = TextEditingController();
+  String sr = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,21 +55,59 @@ class _ResetPasswordState extends State<ResetPassword> {
                     reusableTextField("Enter Email address", Icons.person_outline, false,
                         _emailTextController),
                     const SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        sr,
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                          // fontFamily: 'Arial',
+                          // fontSize: 18,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          // height: 0,
+                          // textAlign:
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
                       height: 560,
                     ),
                     firebaseUIButton(context, "Reset Password", () {
-                      if(_emailTextController.text!="") {
-                        const snackBar = SnackBar(
-                          content: Text(
-                              'Reset Password Email Sent! Check your Inbox'),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      if (_emailTextController.text.isNotEmpty) {
+                        FirebaseAuth.instance
+                            .sendPasswordResetEmail(email: _emailTextController.text)
+                            .then((value) {
+                          final snackBar = SnackBar(
+                            content: Text('Reset Password Email Sent! Check your Inbox'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignInScreen()),
+                          );
+                        }).catchError((error) {
+                          print(error);
+                          if (error.toString() ==
+                              "[firebase_auth/user-not-found] There is no user record corresponding to this identifier. The user may have been deleted.") {
+                            setState(() {
+                              sr = "*User Not Found";
+                            });
+                          } else if(error.toString() =="[firebase_auth/invalid-email] The email address is badly formatted."){
+                            setState(() {
+                              sr = "*The email address is badly formatted";
+                            });
+                          }
+                        });
+                      } else {
+                        setState(() {
+                          sr = "*Please Enter an Email Address";
+                        });
                       }
-
-                      FirebaseAuth.instance
-                          .sendPasswordResetEmail(email: _emailTextController.text)
-                          .then((value) => Navigator.of(context).pop());
-                    })
+                    }),
                   ],
                 ),
               ))),

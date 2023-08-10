@@ -37,24 +37,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'autoBooked':0,
       },
   });}
-  Future valid() async {
-    if (_psdTextController.text != _passwordTextController.text) {
-      setState(() {
-        sr = "Password Don't Match";
-      });
-
-      // print(sr);
-    } else if (_passwordTextController.text.length < 6) {
-      setState(() {
-        sr = "Password letters should be more than 6";
-      });
-    } else {
-      setState(() {
-        sr = '';
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,13 +122,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: 290),
                     firebaseUIButton(context, "Send Confirmation link",
                             () async {
-                          valid();
-                          if (_passwordTextController.text.length < 6) {
+
+                          if (!_emailIsValid(_emailTextController.text)) {
+                              setState(() {
+                              sr = "*The email address is badly formatted";
+                              });
+                              }
+                          else if (_passwordTextController.text.length < 6) {
                             setState(() {
-                              sr = "Password should be more than 6 letters";
+                              sr = "*Password should be atleast 6 letters";
                             });
                           } else if (_psdTextController.text !=
                               _passwordTextController.text) {
+                            setState(() {
+                              sr = "*Password Don't Match";
+                            });
                           } else {
                            UserCredential user= await FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
@@ -181,5 +171,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ))),
     );
+  }
+  bool _emailIsValid(String email) {
+    final emailRegExp = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+    return emailRegExp.hasMatch(email);
   }
 }
