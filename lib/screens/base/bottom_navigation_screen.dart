@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:iitj_travel/screens/base/request_established.dart';
 import './home_screen.dart';
 import './mypage.dart';
+import './request_management.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class BottomNavigationScreen extends StatefulWidget {
   @override
@@ -77,41 +82,12 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   }
 }
 
-class RequestManagementPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2, // Number of tabs
-      child: Column(
-        children: [
-          TabBar(
-            tabs: [
-              Tab(text: 'Requests Received'),
-              Tab(text: 'Requests Sent'),
-            ],
-            labelColor: Color.fromRGBO(17, 86, 149, 1), // Selected tab text color
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                // Widget for "Requests Received" tab
-                Center(child: Text('Requests Received Page')),
-
-                // Widget for "Requests Sent" tab
-                Center(child: Text('Requests Sent Page')),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 
 class MessagesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
     return DefaultTabController(
       length: 2, // Number of tabs
       child: Column(
@@ -127,7 +103,7 @@ class MessagesPage extends StatelessWidget {
             child: TabBarView(
               children: [
                 // Widget for "Established Travel" tab
-                Center(child: Text('Established Travel Page')),
+                RequestsEstablishedPage(currentUserUid: currentUserUid),
 
                 // Widget for "Communication" tab
                 Center(child: Text('Communication Page')),

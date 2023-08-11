@@ -234,7 +234,7 @@ class _MatchingConditionState extends State<MatchingCondition> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const HomeScreen(),
+                  builder: (context) => BottomNavigationScreen(),
                 ),
               );
             }),
