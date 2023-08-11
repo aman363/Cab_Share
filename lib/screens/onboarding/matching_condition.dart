@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iitj_travel/screens/base/bottom_navigation_screen.dart';
 import 'package:iitj_travel/screens/base/home_screen.dart';
 import '../reusable_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -208,7 +209,7 @@ class _MatchingConditionState extends State<MatchingCondition> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
+                    builder: (context) => BottomNavigationScreen(),
                   ),
                 );
 
