@@ -44,66 +44,72 @@ class _HomeScreenState extends State<HomeScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          color: Color.fromRGBO(17, 86, 149, 1), // Blue color
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text(
-                            "${user['basicInfo']['name'].toUpperCase()}",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white, // White text color
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          "${user['basicInfo']['hostel']} is travelling from ${user['matchingConditions']['source']} to ${user['matchingConditions']['destination']} on ${user['matchingConditions']['date']} at ${user['matchingConditions']['time']}.",
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        color: Color.fromRGBO(169, 210, 255, 1.0), // Blue color
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+                        width: double.infinity, // Make the color strip extend to full width
+                        child: Text(
+                          "${user['basicInfo']['name'].toUpperCase()}",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(14, 77, 141, 1.0),// White text color
                           ),
                         ),
-                        SizedBox(height: 8),
-                        Text(
-                          user['matchingConditions']['autoBooked'] == 1
-                              ? "Auto is booked"
-                              : "Auto not booked yet",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: user['matchingConditions']['autoBooked'] == 1
-                                ? Colors.green
-                                : Colors.red,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.center,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Handle request button press
-                              print("Request button pressed for ${user['basicInfo']['name']}");
-                            },
-                            child: Text("Request"),
-                            style: ElevatedButton.styleFrom(
-                              primary: const Color.fromRGBO(17, 86, 149, 1),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 10,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 8),
+                            Text(
+                              "${user['basicInfo']['hostel']} is travelling from ${user['matchingConditions']['source']} to ${user['matchingConditions']['destination']} on ${user['matchingConditions']['date']} at ${user['matchingConditions']['time']}.",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
+                            SizedBox(height: 8),
+                            Text(
+                              user['matchingConditions']['autoBooked'] == 1
+                                  ? "Auto is booked"
+                                  : "Auto not booked yet",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: user['matchingConditions']['autoBooked'] == 1
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.center,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Handle request button press
+                                  print("Request button pressed for ${user['basicInfo']['name']}");
+                                },
+                                child: Text("Request"),
+                                style: ElevatedButton.styleFrom(
+                                  primary: const Color.fromRGBO(17, 86, 149, 1),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 10,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               );

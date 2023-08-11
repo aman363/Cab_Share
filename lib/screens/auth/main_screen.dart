@@ -3,6 +3,9 @@ import './signup_screen.dart';
 import './signin_screen.dart';
 import 'package:flutter/material.dart';
 import '../reusable_widgets.dart';
+import '../auth/shared_preference_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitj_travel/screens/base/bottom_navigation_screen.dart';
 
 
 
@@ -12,8 +15,30 @@ class MainScreen extends StatefulWidget {
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
-
 class _MainScreenState extends State<MainScreen> {
+  bool _isBoolValue =false;
+  @override
+
+  void initState() {
+    super.initState();
+    initializeSharedPreferences();
+  }
+
+  void initializeSharedPreferences() async {
+    _isBoolValue = await SharedPreferencesService.getBoolValue('_isBoolValue');
+
+
+    if (_isBoolValue) {
+      // User is already logged in, navigate to home screen
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final User? user = auth.currentUser;
+      final uid = user?.uid;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => BottomNavigationScreen()),
+      );
+    }
+  }
   @override
 
   Widget build(BuildContext context) {

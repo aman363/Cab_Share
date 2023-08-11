@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './home_screen.dart';
+import './mypage.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
   @override
@@ -140,11 +141,3 @@ class MessagesPage extends StatelessWidget {
 }
 
 
-class MyPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('My Page'),
-    );
-  }
-}

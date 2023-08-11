@@ -7,6 +7,7 @@ import '../reusable_widgets.dart';
 import './signup_screen.dart';
 import './reset_password.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../auth/shared_preference_services.dart';
 
 
 class SignInScreen extends StatefulWidget {
@@ -133,7 +134,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     }
 
                     if (FirebaseAuth.instance.currentUser!.emailVerified) {
-                      //SharedPreferencesService.updateBoolValue(true);
+                      SharedPreferencesService.updateBoolValue(true);
                       final FirebaseAuth auth = FirebaseAuth.instance;
                       final User? user = auth.currentUser;
                       final uid = user?.uid;
