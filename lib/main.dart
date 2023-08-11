@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:iitj_travel/screens/auth/main_screen.dart';
+import 'package:iitj_travel/screens/base/bottom_navigation_screen.dart';
 import 'package:iitj_travel/screens/onboarding/matching_condition.dart';
 import 'package:iitj_travel/screens/onboarding/onboarding.dart';
 

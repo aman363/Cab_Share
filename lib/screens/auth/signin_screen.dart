@@ -1,8 +1,8 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iitj_travel/screens/base/bottom_navigation_screen.dart';
 import 'package:iitj_travel/screens/onboarding/onboarding.dart';
-import '../base/home_screen.dart';
 import '../reusable_widgets.dart';
 import './signup_screen.dart';
 import './reset_password.dart';
@@ -156,7 +156,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => flag
-                                  ? OnboardingScreen() : HomeScreen()));
+                                  ? OnboardingScreen() : BottomNavigationScreen()));
                     }
                   }).onError((error, stackTrace) {
                     print(error.toString());
