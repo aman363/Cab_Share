@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitj_travel/services/notification_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,11 +13,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> matchingUsers = [];
   late String currentUserUid;
+  NotificationServices notificationServices= NotificationServices();
 
   @override
   void initState() {
     super.initState();
     currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+    notificationServices.requestNotificationPermission();
   }
 
   @override
@@ -137,7 +140,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: ElevatedButton(
                                       onPressed: () async {
                                         String loggedInUserUid = FirebaseAuth.instance.currentUser!.uid;
-                                        String pressedUserUid = user['uid']; // Replace 'uid' with the actual field in your user data
+                                        String pressedUserUid = user['uid'];
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text("Request sent to ${user['basicInfo']['name']}"),
+                                            backgroundColor: Colors.lightBlue,
+                                          ),
+                                        );// Replace 'uid' with the actual field in your user data
 
                                         // Update requestSent array of logged-in user
                                         await FirebaseFirestore.instance
@@ -154,13 +163,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                             .update({
                                           'requestReceived': FieldValue.arrayUnion([loggedInUserUid])
                                         });
+
                                       },
                                       child: Text("Request"),
                                       style: ElevatedButton.styleFrom(
                                         primary: const Color.fromRGBO(17, 86, 149, 1),
                                         padding: EdgeInsets.symmetric(
-                                          horizontal: 15,
-                                          vertical: 10,
+                                          horizontal: 20,
+                                          vertical: 13,
                                         ),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(5),

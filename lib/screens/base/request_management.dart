@@ -146,7 +146,12 @@ class RequestsReceivedPage extends StatelessWidget {
                                             // Add your accept button logic here
                                             String pressedUserId = userId; // Get the pressed user's ID
                                             String currentUserId = currentUserUid; // Get the current user's ID
-
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text("Request from ${user['basicInfo']['name']} accepted"),
+                                                backgroundColor: Colors.lightBlue,
+                                              ),
+                                            );
                                             // Update the requestEstablished arrays for both users
                                             await FirebaseFirestore.instance.collection("Profile").doc(pressedUserId).update({
                                               'requestEstablished': FieldValue.arrayUnion([currentUserId]),
@@ -168,8 +173,8 @@ class RequestsReceivedPage extends StatelessWidget {
                                           style: ElevatedButton.styleFrom(
                                             primary: const Color.fromRGBO(17, 86, 149, 1),
                                             padding: EdgeInsets.symmetric(
-                                              horizontal: 15,
-                                              vertical: 10,
+                                              horizontal: 20,
+                                              vertical: 13,
                                             ),
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(5),
@@ -181,6 +186,13 @@ class RequestsReceivedPage extends StatelessWidget {
                                           onPressed: () async {
                                             String pressedUserId = userId; // Get the pressed user's ID
                                             String currentUserId = currentUserUid; // Get the current user's ID
+
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text("Request from ${user['basicInfo']['name']} declined"),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
 
                                             // Remove the pressed user's ID from current user's requestReceived array
                                             await FirebaseFirestore.instance.collection("Profile").doc(currentUserId).update({
@@ -196,8 +208,8 @@ class RequestsReceivedPage extends StatelessWidget {
                                           style: ElevatedButton.styleFrom(
                                             primary: Colors.red, // Use a different color for the decline button
                                             padding: EdgeInsets.symmetric(
-                                              horizontal: 15,
-                                              vertical: 10,
+                                              horizontal: 20,
+                                              vertical: 13,
                                             ),
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(5),
@@ -336,6 +348,12 @@ class RequestsSentPage extends StatelessWidget {
                                     alignment: Alignment.center,
                                     child: ElevatedButton(
                                       onPressed: () async {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text("Request to ${user['basicInfo']['name']} cancelled"),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
                                         String pressedUserId = userId; // Get the pressed user's ID
                                         String currentUserId = currentUserUid; // Get the current user's ID
 
@@ -353,8 +371,8 @@ class RequestsSentPage extends StatelessWidget {
                                       style: ElevatedButton.styleFrom(
                                         primary: const Color.fromRGBO(17, 86, 149, 1),
                                         padding: EdgeInsets.symmetric(
-                                          horizontal: 15,
-                                          vertical: 10,
+                                          horizontal: 20,
+                                          vertical: 13,
                                         ),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(5),

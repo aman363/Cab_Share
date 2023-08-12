@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RequestsEstablishedPage extends StatelessWidget {
   final String currentUserUid;
@@ -105,21 +105,67 @@ class RequestsEstablishedPage extends StatelessWidget {
                                   SizedBox(height: 8),
                                   Align(
                                     alignment: Alignment.center,
-                                    child: ElevatedButton(
-                                      onPressed: () async {
-                                        // Add your button logic here
-                                      },
-                                      child: Text("Message"),
-                                      style: ElevatedButton.styleFrom(
-                                        primary: const Color.fromRGBO(17, 86, 149, 1),
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 15,
-                                          vertical: 10,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            String contactNumber = user['basicInfo']['contact'];
+
+                                            // Generate a URL with the 'tel:' scheme to initiate a call
+                                            String url = 'tel:$contactNumber';
+
+                                            // Check if the URL can be launched
+                                            if (await canLaunch(url)) {
+                                              // Launch the URL
+                                              await launch(url);
+                                            } else {
+                                              // Handle if the URL can't be launched (e.g., no phone app available)
+                                              print('Could not launch $url');
+                                            }
+
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.call), // Call icon
+                                              SizedBox(width: 8), // Add spacing between icon and text
+                                              Text("Call"),
+                                            ],
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            primary: const Color.fromRGBO(17, 86, 149, 1),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 15,
+                                              vertical: 10,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                          ),
                                         ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(5),
+                                        SizedBox(width: 15), // Add some spacing between buttons
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.message), // Message icon
+                                              SizedBox(width: 8), // Add spacing between icon and text
+                                              Text("Message"),
+                                            ],
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            primary: const Color.fromRGBO(17, 86, 149, 1),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 15,
+                                              vertical: 10,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ),
                                 ],
