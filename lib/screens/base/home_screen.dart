@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitj_travel/services/notification_services.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -20,6 +23,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     currentUserUid = FirebaseAuth.instance.currentUser!.uid;
     notificationServices.requestNotificationPermission();
+    notificationServices.firebaseInit(context);
+    notificationServices.setupInteractMessage(context);
+    notificationServices.getDeviceToken().then((value) async{
+      await FirebaseFirestore.instance.collection("Profile").doc(currentUserUid).update({
+        'fcmToken': value.toString(),
+      });
+    });
   }
 
   @override
@@ -35,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
           List<String> requestSent = List<String>.from(userData['requestSent'] ?? []);
           List<String> requestReceived = List<String>.from(userData['requestReceived'] ?? []);
           List<String> requestEstablished = List<String>.from(userData['requestEstablished'] ?? []);
+          String loggedInUserName=userData['basicInfo']['name'];
 
           return StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
@@ -146,7 +157,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                             content: Text("Request sent to ${user['basicInfo']['name']}"),
                                             backgroundColor: Colors.lightBlue,
                                           ),
-                                        );// Replace 'uid' with the actual field in your user data
+                                        );
+                                        notificationServices.getDeviceToken().then((value) async{
+                                          var data={
+                                            'to': user['fcmToken'],
+                                            'priority': 'high',
+                                            'notification': {
+                                              'title': 'New Request',
+                                              'body': 'New Request from $loggedInUserName',
+                                            }
+                                          };
+                                          await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+                                            body:jsonEncode(data),
+                                            headers:{
+                                            'Content-Type': 'application/json; charset=UTF-8',
+                                              'Authorization': 'key=AAAAVq17HoU:APA91bFv4d1jHUoVmyxb6HWgsbtp-6VNmNPYNyMgBKJhgV0I84FQSpzOoY60hecKTpxsKz0T7v73FY-JZ6jb13BErboRrD_x0B0YKfCniXmoI_fMtM6gF0W5q3NeNjuayvhwFArOIgXB'
+                                            }
+                                          );
+
+                                        });
 
                                         // Update requestSent array of logged-in user
                                         await FirebaseFirestore.instance

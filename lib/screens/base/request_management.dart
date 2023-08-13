@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitj_travel/services/notification_services.dart';
+import 'package:http/http.dart' as http;
+
+import 'dart:convert';
 
 class RequestManagementPage extends StatelessWidget {
   @override
@@ -39,6 +43,7 @@ class RequestsReceivedPage extends StatelessWidget {
   final String currentUserUid;
 
   RequestsReceivedPage({required this.currentUserUid});
+  NotificationServices notificationServices= NotificationServices();
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +52,7 @@ class RequestsReceivedPage extends StatelessWidget {
       builder: (context, userSnapshot) {
         if (userSnapshot.hasData) {
           List<String> requestsReceived = List<String>.from(userSnapshot.data!['requestReceived'] ?? []);
-
+          String loggedInUserName=userSnapshot.data!['basicInfo']['name'];
           return ListView.builder(
             itemCount: requestsReceived.length,
             itemBuilder: (context, index) {
@@ -152,6 +157,24 @@ class RequestsReceivedPage extends StatelessWidget {
                                                 backgroundColor: Colors.lightBlue,
                                               ),
                                             );
+                                            notificationServices.getDeviceToken().then((value) async{
+                                              var data={
+                                                'to': user['fcmToken'],
+                                                'priority': 'high',
+                                                'notification': {
+                                                  'title': 'Request Accepted',
+                                                  'body': '$loggedInUserName accepted your request',
+                                                }
+                                              };
+                                              await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+                                                  body:jsonEncode(data),
+                                                  headers:{
+                                                    'Content-Type': 'application/json; charset=UTF-8',
+                                                    'Authorization': 'key=AAAAVq17HoU:APA91bFv4d1jHUoVmyxb6HWgsbtp-6VNmNPYNyMgBKJhgV0I84FQSpzOoY60hecKTpxsKz0T7v73FY-JZ6jb13BErboRrD_x0B0YKfCniXmoI_fMtM6gF0W5q3NeNjuayvhwFArOIgXB'
+                                                  }
+                                              );
+
+                                            });
                                             // Update the requestEstablished arrays for both users
                                             await FirebaseFirestore.instance.collection("Profile").doc(pressedUserId).update({
                                               'requestEstablished': FieldValue.arrayUnion([currentUserId]),

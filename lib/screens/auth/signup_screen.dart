@@ -24,6 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void createUserDataStructure(String uid) {
     FirebaseFirestore.instance.collection("Profile").doc(uid).set({
       'uid': uid,
+      'fcmToken':"",
       'requestSent':[],
       'requestReceived':[],
       'requestEstablished':[],
