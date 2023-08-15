@@ -61,7 +61,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.request_page),
-              label: 'Request Management',
+              label: 'Request Manage',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.message),

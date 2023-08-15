@@ -44,6 +44,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        color: Colors.white,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         //decoration: const BoxDecoration(image: DecorationImage(image: AssetImage("assets/images/front_new.png"), fit: BoxFit.cover),),
@@ -53,28 +54,11 @@ class _MainScreenState extends State<MainScreen> {
                 20, MediaQuery.of(context).size.height * 0.30, 20, 0),
             child: Column(
               children: <Widget>[
-
-                const Text(
-                  "AI",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 36.8, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-                Text(
-                  "Welcome",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 36.8, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-                //Image.asset(
-                //  'assets/images/hand.png',
-                 // scale: 2.1,),
+                Image.asset(
+                  'assets/cab-share-logo.png',
+                  scale: 2.1,),
 
                 const SizedBox(height: 120),
-
-                Text(
-                  "IITJ Travel",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
                 firebaseUIButton(context, "Register", () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpScreen()));
                 }),
