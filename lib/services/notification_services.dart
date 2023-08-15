@@ -124,7 +124,7 @@ class NotificationServices {
 
   void handleMessage(BuildContext context, RemoteMessage message){
     if(message.notification!.title.toString()=='New Request'){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>BottomNavigationScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>BottomNavigationScreen(clearButton:false)));
     }
   }
 }

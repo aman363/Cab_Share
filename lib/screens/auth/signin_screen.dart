@@ -157,7 +157,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => flag
-                                  ? OnboardingScreen() : BottomNavigationScreen()));
+                                  ? OnboardingScreen() : BottomNavigationScreen(clearButton:false)));
                     }
                   }).onError((error, stackTrace) {
                     print(error.toString());

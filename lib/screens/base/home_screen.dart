@@ -7,16 +7,33 @@ import 'package:iitj_travel/services/notification_services.dart';
 import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final String? selectedSource;
+  final String? selectedDestination;
+  final DateTime? selectedDate;
+  final bool? isDateSelected;
+
+  const HomeScreen({
+    Key? key,
+    this.selectedSource,
+    this.selectedDestination,
+    this.selectedDate,
+    this.isDateSelected,
+  }) : super(key: key);
+
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   List<Map<String, dynamic>> matchingUsers = [];
   late String currentUserUid;
   NotificationServices notificationServices= NotificationServices();
+  late String? selectedSource;
+  late String? selectedDestination;
+  late DateTime? selectedDate;
+  late bool? isDateSelected;
 
   @override
   void initState() {
@@ -30,10 +47,15 @@ class _HomeScreenState extends State<HomeScreen> {
         'fcmToken': value.toString(),
       });
     });
+    selectedSource = widget.selectedSource; // Assign the values here
+    selectedDestination = widget.selectedDestination; // Assign the values here
+    selectedDate = widget.selectedDate; // Assign the values here
+    isDateSelected = widget.isDateSelected;
   }
 
   @override
   Widget build(BuildContext context) {
+
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection("Profile")
@@ -62,6 +84,35 @@ class _HomeScreenState extends State<HomeScreen> {
                     !requestReceived.contains(user['uid']) && // Exclude users in requestReceived
                     !requestEstablished.contains(user['uid'])) // Exclude users in requestEstablished
                     .toList();
+                String formattedSelectedDate = "${selectedDate?.day.toString().padLeft(2, '0')}-${selectedDate?.month.toString().padLeft(2, '0')}-${selectedDate?.year}";
+
+                if (selectedSource != null && selectedDestination != null && isDateSelected!= false) {
+                  matchingUsers = matchingUsers.where((user) =>
+                  user['matchingConditions']['source'] == selectedSource &&
+                      user['matchingConditions']['destination'] == selectedDestination &&
+                      user['matchingConditions']['date'] == formattedSelectedDate).toList();
+                } else if (selectedSource != null && selectedDestination != null) {
+                  matchingUsers = matchingUsers.where((user) =>
+                  user['matchingConditions']['source'] == selectedSource &&
+                      user['matchingConditions']['destination'] == selectedDestination).toList();
+                } else if (selectedSource != null && isDateSelected != false) {
+                  matchingUsers = matchingUsers.where((user) =>
+                  user['matchingConditions']['source'] == selectedSource &&
+                      user['matchingConditions']['date'] == formattedSelectedDate).toList();
+                } else if (selectedDestination != null && isDateSelected != false) {
+                  matchingUsers = matchingUsers.where((user) =>
+                  user['matchingConditions']['destination'] == selectedDestination &&
+                      user['matchingConditions']['date'] == formattedSelectedDate).toList();
+                } else if (selectedSource != null) {
+                  matchingUsers = matchingUsers.where((user) =>
+                  user['matchingConditions']['source'] == selectedSource).toList();
+                } else if (selectedDestination != null) {
+                  matchingUsers = matchingUsers.where((user) =>
+                  user['matchingConditions']['destination'] == selectedDestination).toList();
+                } else if (isDateSelected!= false) {
+                  matchingUsers = matchingUsers.where((user) =>
+                  user['matchingConditions']['date'] == formattedSelectedDate).toList();
+                }
 
                 return ListView.builder(
                   itemCount: matchingUsers.length,

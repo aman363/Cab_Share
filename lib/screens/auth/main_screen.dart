@@ -35,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
       final uid = user?.uid;
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => BottomNavigationScreen()),
+        MaterialPageRoute(builder: (context) => BottomNavigationScreen(clearButton:false)),
       );
     }
   }
