@@ -21,6 +21,7 @@ class MyPage extends StatelessWidget {
     String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
     String? currentUserEmail = FirebaseAuth.instance.currentUser?.email;
 
+
     return FutureBuilder<Map<String, dynamic>>(
       future: fetchUserData(currentUserUid),
       builder: (context, snapshot) {
@@ -30,6 +31,7 @@ class MyPage extends StatelessWidget {
           return const Text("Error fetching user data");
         } else {
           Map<String, dynamic> userData = snapshot.data!;
+          String currentUserName = userData['basicInfo']['name'];
 
           return WillPopScope(
             onWillPop: () async {
@@ -81,6 +83,15 @@ class MyPage extends StatelessWidget {
                             ),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        currentUserName,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromRGBO(17, 86, 149, 1),
+                        ),
                       ),
                     ],
                   ),

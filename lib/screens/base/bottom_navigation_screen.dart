@@ -6,6 +6,7 @@ import './home_screen.dart';
 import './mypage.dart';
 import './request_management.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
   final bool clearButton;
@@ -305,7 +306,7 @@ class MessagesPage extends StatelessWidget {
                 RequestsEstablishedPage(currentUserUid: currentUserUid),
 
                 // Widget for "Communication" tab
-                Center(child: Text('Communication Page')),
+                CommunicationTab(),
               ],
             ),
           ),
@@ -313,6 +314,48 @@ class MessagesPage extends StatelessWidget {
       ),
     );
 
+  }
+}
+
+class CommunicationTab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection("ChatRooms")
+          .where('users', arrayContains: FirebaseAuth.instance.currentUser!.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<String> userNames = [];
+          for (var doc in snapshot.data!.docs) {
+            List<String> users = List<String>.from(doc['users'] ?? []);
+            users.remove(FirebaseAuth.instance.currentUser!.uid);
+            if (users.isNotEmpty) {
+              userNames.add(users[0]);
+            }
+          }
+
+          if (userNames.isEmpty) {
+            return Center(child: Text('No Communication Established'));
+          }
+
+          return ListView.builder(
+            itemCount: userNames.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(userNames[index]),
+                // Add onTap logic to open the communication with the selected user
+                onTap: () {
+                  // TODO: Navigate to the communication screen with selected user
+                },
+              );
+            },
+          );
+        } else {
+          return Center(child: CircularProgressIndicator()); // Loading indicator
+        }
+      },
+    );
   }
 }
 

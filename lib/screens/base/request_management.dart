@@ -190,6 +190,15 @@ class RequestsReceivedPage extends StatelessWidget {
                                             await FirebaseFirestore.instance.collection("Profile").doc(pressedUserId).update({
                                               'requestSent': FieldValue.arrayRemove([currentUserId]),
                                             });
+                                            String chatRoomId = '$currentUserId@$pressedUserId';
+
+                                            // Create a new document in the ChatRooms collection
+                                            await FirebaseFirestore.instance.collection("ChatRooms").doc(chatRoomId).set({
+                                              'users': [currentUserId, pressedUserId],
+                                            });
+
+                                            // Create the "chats" subcollection within the newly created document
+                                            await FirebaseFirestore.instance.collection("ChatRooms").doc(chatRoomId).collection("chats").doc().set({});
 
                                           },
                                           child: Text("Accept"),
