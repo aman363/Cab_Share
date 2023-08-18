@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:iitj_travel/services/notification_services.dart';
+import 'package:http/http.dart' as http;
+
+import 'dart:convert';
 
 class ChatPage extends StatefulWidget {
   final String chatRoomId;
   final String userName;
 
   ChatPage({required this.chatRoomId, required this.userName});
+
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -16,8 +21,11 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  NotificationServices notificationServices= NotificationServices();
+  String currentUserUid=FirebaseAuth.instance.currentUser!.uid;
 
   void _sendMessage(String message) async {
+    _messageController.clear();
     if (message.trim().isEmpty) {
       return;
     }
@@ -30,16 +38,68 @@ class _ChatPageState extends State<ChatPage> {
           'status': false,
           'time': serverTimestamp,
         });
+        final oppositeUserId = getOppositeUserId(widget.chatRoomId, currentUserUid);
+        if (oppositeUserId.isNotEmpty) {
+          final oppositeUserFCMToken = await getOppositeUserFCMToken(oppositeUserId);
+          final currentUserDoc = await FirebaseFirestore.instance.collection("Profile").doc(currentUserUid).get();
+          final currentUserName = currentUserDoc['basicInfo']['name'] ?? 'Unknown User'; // Get the current user's name
+          if (oppositeUserFCMToken != null) {
+            notificationServices.getDeviceToken().then((value) async{
+              var data={
+                'to': oppositeUserFCMToken,
+                'priority': 'high',
+                'notification': {
+                  'title': 'New Message',
+                  'body': '$currentUserName: $message',
+                }
+              };
+              await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+                  body:jsonEncode(data),
+                  headers:{
+                    'Content-Type': 'application/json; charset=UTF-8',
+                    'Authorization': 'key=AAAAVq17HoU:APA91bFv4d1jHUoVmyxb6HWgsbtp-6VNmNPYNyMgBKJhgV0I84FQSpzOoY60hecKTpxsKz0T7v73FY-JZ6jb13BErboRrD_x0B0YKfCniXmoI_fMtM6gF0W5q3NeNjuayvhwFArOIgXB'
+                  }
+              );
+
+            });
+          }
+        }
       } else {
         print('Server timestamp is null');
         return;
       }
-
-      _messageController.clear();
     } catch (e) {
       print('Error sending message: $e');
     }
   }
+
+  String getOppositeUserId(String chatRoomId, String currentUserUid) {
+    final uids = chatRoomId.split('@');
+    if (uids.length == 2) {
+      if (uids[0] == currentUserUid) {
+        return uids[1];
+      } else if (uids[1] == currentUserUid) {
+        return uids[0];
+      }
+    }
+    return '';
+  }
+
+  Future<String?> getOppositeUserFCMToken(String oppositeUserId) async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection("Profile").doc(oppositeUserId).get();
+      if (userSnapshot.exists) {
+        Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+        return userData['fcmToken'] as String?;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching opposite user FCM token: $e');
+      return null;
+    }
+  }
+
 
   String _formatTimestamp(Timestamp? timestamp) {
     if (timestamp == null) {
@@ -49,7 +109,6 @@ class _ChatPageState extends State<ChatPage> {
     String formattedTime = DateFormat.jm().format(dateTime); // Format time
     return formattedTime;
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

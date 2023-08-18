@@ -32,6 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'name': "",
         'contact': "",
         'hostel':"",
+        'image':"",
       },
       'matchingConditions': {
         'date': "",

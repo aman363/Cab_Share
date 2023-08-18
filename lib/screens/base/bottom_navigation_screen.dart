@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:iitj_travel/screens/base/chat.dart';
 import 'package:iitj_travel/screens/base/request_established.dart';
+import 'package:intl/intl.dart';
 import './home_screen.dart';
 import './mypage.dart';
 import './request_management.dart';
@@ -337,15 +338,25 @@ class CommunicationTab extends StatelessWidget {
         if (userSnapshot.exists) {
           Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
           String userName = userData['basicInfo']['name'];
+          String userImage = userData['basicInfo']['image'];
           userDataList.add({
             'userName': userName,
             'userId': userId,
+            'userImage': userImage,
           });
         }
       }
     }
 
     return userDataList;
+  }
+  String _formatTimestamp(Timestamp? timestamp) {
+    if (timestamp == null) {
+      return ''; // Return an empty string or a default value
+    }
+    DateTime dateTime = timestamp.toDate();
+    String formattedTime = DateFormat.jm().format(dateTime); // Format time
+    return formattedTime;
   }
 
   @override
@@ -373,18 +384,48 @@ class CommunicationTab extends StatelessWidget {
                   itemBuilder: (context, index) {
                     String userName = userDataList[index]['userName'];
                     String userId = userDataList[index]['userId'];
-                    return ListTile(
-                      title: Text(userName),
-                      // Add onTap logic to open the communication with the selected user
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatPage(
-                              chatRoomId: getChatRoomId(currentUserUid, userId),
-                              userName: userName,
-                            ),
+                    String userImage = userDataList[index]['userImage'] ?? '';
+
+                    return StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection("ChatRooms")
+                          .doc(getChatRoomId(currentUserUid, userId))
+                          .collection('chats')
+                          .orderBy('time', descending: true)
+                          .limit(1)
+                          .snapshots(),
+                      builder: (context, messageSnapshot) {
+                        String mostRecentMessage = 'No messages';
+                        Timestamp? mostRecentMessageTime;
+
+                        if (messageSnapshot.hasData && messageSnapshot.data!.docs.isNotEmpty) {
+                          var messageData = messageSnapshot.data!.docs[0].data() as Map<String, dynamic>;
+                          mostRecentMessage = messageData['message'];
+                          mostRecentMessageTime = messageData['time'];
+                        }
+
+                        String formattedTime = _formatTimestamp(mostRecentMessageTime);
+
+                        return ListTile(
+                          title: Text(userName),
+                          subtitle: Text(mostRecentMessage),
+                          trailing: Text(formattedTime),
+                          leading: CircleAvatar(
+                            backgroundImage: userImage.isNotEmpty ? NetworkImage(userImage) : null,
+                            backgroundColor: userImage.isEmpty ? Colors.grey : null,
+                            child: userImage.isEmpty ? Icon(Icons.person, color: Colors.white) : null,
                           ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                  chatRoomId: getChatRoomId(currentUserUid, userId),
+                                  userName: userName,
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     );
