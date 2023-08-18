@@ -19,6 +19,33 @@ class RequestsEstablishedPage extends StatelessWidget {
         if (userSnapshot.hasData) {
           List<String> requestsEstablished = List<String>.from(userSnapshot.data!['requestEstablished'] ?? []);
           String loggedInUserName=userSnapshot.data!['basicInfo']['name'];
+          if (requestsEstablished.isEmpty) {
+            // Display a centered message when there are no cards to show
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20), // Add horizontal padding
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.handshake, // People icon
+                      size: 100,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "The travellers with whom the travel is establised will be displayed here",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center, // Center align the text
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
 
           return ListView.builder(
             itemCount: requestsEstablished.length,

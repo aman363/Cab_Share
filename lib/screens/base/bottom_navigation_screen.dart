@@ -261,7 +261,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
               label: 'Matching Users',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.perm_contact_calendar),
+              icon: Icon(Icons.mark_email_read_sharp),
               label: 'Request Manage',
             ),
             BottomNavigationBarItem(
@@ -377,7 +377,31 @@ class CommunicationTab extends StatelessWidget {
               } else if (userDataSnapshot.hasData) {
                 List<Map<String, dynamic>> userDataList = userDataSnapshot.data!;
                 if (userDataList.isEmpty) {
-                  return Center(child: Text('No Communication Established'));
+                  // Display a centered message when there are no cards to show
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20), // Add horizontal padding
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.message, // People icon
+                            size: 100,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "The interaction with other travellers with whom the travel is established will be displayed here",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                            textAlign: TextAlign.center, // Center align the text
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 }
                 return ListView.builder(
                   itemCount: userDataList.length,

@@ -53,6 +53,33 @@ class RequestsReceivedPage extends StatelessWidget {
         if (userSnapshot.hasData) {
           List<String> requestsReceived = List<String>.from(userSnapshot.data!['requestReceived'] ?? []);
           String loggedInUserName=userSnapshot.data!['basicInfo']['name'];
+          if (requestsReceived.isEmpty) {
+            // Display a centered message when there are no cards to show
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.mark_email_read_sharp, // People icon
+                    size: 100,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Here you will see request from other travellers",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+              ),
+            );
+          }
           return ListView.builder(
             itemCount: requestsReceived.length,
             itemBuilder: (context, index) {
@@ -292,6 +319,33 @@ class RequestsSentPage extends StatelessWidget {
       builder: (context, userSnapshot) {
         if (userSnapshot.hasData) {
           List<String> requestsSent = List<String>.from(userSnapshot.data!['requestSent'] ?? []);
+          if (requestsSent.isEmpty) {
+            // Display a centered message when there are no cards to show
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.send, // People icon
+                    size: 100,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "The travellers you requested to travel with will be displayed here",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+              ),
+            );
+          }
 
           return ListView.builder(
             itemCount: requestsSent.length,

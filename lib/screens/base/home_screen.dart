@@ -113,7 +113,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   matchingUsers = matchingUsers.where((user) =>
                   user['matchingConditions']['date'] == formattedSelectedDate).toList();
                 }
-
+                if (matchingUsers.isEmpty) {
+                  // Display a centered message when there are no cards to show
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20), // Add horizontal padding
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.groups, // People icon
+                            size: 100,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Here you will see all the travel cards,\nYou can make your own with the addition button",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                            textAlign: TextAlign.center, // Center align the text
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
                 return ListView.builder(
                   itemCount: matchingUsers.length,
                   itemBuilder: (context, index) {
