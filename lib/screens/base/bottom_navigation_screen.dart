@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:iitj_travel/screens/base/chat.dart';
 import 'package:iitj_travel/screens/base/request_established.dart';
 import './home_screen.dart';
 import './mypage.dart';
@@ -318,37 +319,80 @@ class MessagesPage extends StatelessWidget {
 }
 
 class CommunicationTab extends StatelessWidget {
+  String getChatRoomId(String uid1, String uid2) {
+    List<String> uids = [uid1, uid2];
+    uids.sort(); // Sort the UIDs to ensure consistency
+    return "${uids[0]}@${uids[1]}";
+  }
+
+  Future<List<Map<String, dynamic>>> getUserDataFromChatRooms(QuerySnapshot chatRoomsSnapshot) async {
+    List<Map<String, dynamic>> userDataList = [];
+
+    for (var doc in chatRoomsSnapshot.docs) {
+      List<String> users = List<String>.from(doc['users'] ?? []);
+      users.remove(FirebaseAuth.instance.currentUser!.uid);
+      if (users.isNotEmpty) {
+        String userId = users[0];
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection("Profile").doc(userId).get();
+        if (userSnapshot.exists) {
+          Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+          String userName = userData['basicInfo']['name'];
+          userDataList.add({
+            'userName': userName,
+            'userId': userId,
+          });
+        }
+      }
+    }
+
+    return userDataList;
+  }
+
   @override
   Widget build(BuildContext context) {
+    String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection("ChatRooms")
-          .where('users', arrayContains: FirebaseAuth.instance.currentUser!.uid)
+          .where('users', arrayContains: currentUserUid)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<String> userNames = [];
-          for (var doc in snapshot.data!.docs) {
-            List<String> users = List<String>.from(doc['users'] ?? []);
-            users.remove(FirebaseAuth.instance.currentUser!.uid);
-            if (users.isNotEmpty) {
-              userNames.add(users[0]);
-            }
-          }
-
-          if (userNames.isEmpty) {
-            return Center(child: Text('No Communication Established'));
-          }
-
-          return ListView.builder(
-            itemCount: userNames.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(userNames[index]),
-                // Add onTap logic to open the communication with the selected user
-                onTap: () {
-                  // TODO: Navigate to the communication screen with selected user
-                },
-              );
+          return FutureBuilder<List<Map<String, dynamic>>>(
+            future: getUserDataFromChatRooms(snapshot.data!),
+            builder: (context, userDataSnapshot) {
+              if (userDataSnapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator()); // Loading indicator
+              } else if (userDataSnapshot.hasData) {
+                List<Map<String, dynamic>> userDataList = userDataSnapshot.data!;
+                if (userDataList.isEmpty) {
+                  return Center(child: Text('No Communication Established'));
+                }
+                return ListView.builder(
+                  itemCount: userDataList.length,
+                  itemBuilder: (context, index) {
+                    String userName = userDataList[index]['userName'];
+                    String userId = userDataList[index]['userId'];
+                    return ListTile(
+                      title: Text(userName),
+                      // Add onTap logic to open the communication with the selected user
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatPage(
+                              chatRoomId: getChatRoomId(currentUserUid, userId),
+                              userName: userName,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              } else {
+                return Center(child: Text('Error fetching user names'));
+              }
             },
           );
         } else {
@@ -358,5 +402,10 @@ class CommunicationTab extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
 
 

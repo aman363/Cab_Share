@@ -224,6 +224,19 @@ class RequestsEstablishedPage extends StatelessWidget {
                                                 );
 
                                               });
+                                              await FirebaseFirestore.instance
+                                                  .collection("Profile").doc(
+                                                  currentUserUid).update({
+                                                'requestEstablished': FieldValue
+                                                    .arrayRemove([userId]),
+                                              });
+                                              await FirebaseFirestore.instance
+                                                  .collection("Profile").doc(
+                                                  userId).update({
+                                                'requestEstablished': FieldValue
+                                                    .arrayRemove(
+                                                    [currentUserUid]),
+                                              });
                                               String chatRoomId1 = '${currentUserUid}@${userId}';
                                               String chatRoomId2 = '${userId}@${currentUserUid}';
 
@@ -255,19 +268,7 @@ class RequestsEstablishedPage extends StatelessWidget {
                                                       "Chat room document doesn't exist");
                                                 }
                                               }
-                                              await FirebaseFirestore.instance
-                                                  .collection("Profile").doc(
-                                                  currentUserUid).update({
-                                                'requestEstablished': FieldValue
-                                                    .arrayRemove([userId]),
-                                              });
-                                              await FirebaseFirestore.instance
-                                                  .collection("Profile").doc(
-                                                  userId).update({
-                                                'requestEstablished': FieldValue
-                                                    .arrayRemove(
-                                                    [currentUserUid]),
-                                              });
+
                                             }
 
                                           },

@@ -190,7 +190,7 @@ class RequestsReceivedPage extends StatelessWidget {
                                             await FirebaseFirestore.instance.collection("Profile").doc(pressedUserId).update({
                                               'requestSent': FieldValue.arrayRemove([currentUserId]),
                                             });
-                                            String chatRoomId = '$currentUserId@$pressedUserId';
+                                            String chatRoomId = generateChatRoomId(currentUserId, pressedUserId);
 
                                             // Create a new document in the ChatRooms collection
                                             await FirebaseFirestore.instance.collection("ChatRooms").doc(chatRoomId).set({
@@ -270,6 +270,11 @@ class RequestsReceivedPage extends StatelessWidget {
         }
       },
     );
+  }
+  String generateChatRoomId(String uid1, String uid2) {
+    List<String> uids = [uid1, uid2];
+    uids.sort(); // Sort the UIDs to ensure consistency
+    return "${uids[0]}@${uids[1]}";
   }
 }
 
