@@ -211,17 +211,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   SizedBox(height: 8),
-                                  Text(
-                                    user['matchingConditions']['autoBooked'] == 1
-                                        ? "Auto is booked"
-                                        : "Auto not booked yet",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: user['matchingConditions']['autoBooked'] == 1
-                                          ? Colors.green
-                                          : Colors.red,
+                                  if (user['matchingConditions']['modeOfTravel'] != null && user['matchingConditions']['modeOfTravel'].isNotEmpty)
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        user['matchingConditions']['modeOfTravel'] == "Auto"
+                                            ? Image.asset('assets/auto.png', width: 35, height: 35) // Use the correct path to the auto.png asset
+                                            : Image.asset('assets/taxi.png', width: 35, height: 35), // Use the correct path to the taxi.png asset
+                                        SizedBox(width: 5),
+                                        Text(
+                                          user['matchingConditions']['modeOfTravel'] == "Auto"
+                                              ? user['matchingConditions']['autoBooked'] == 1
+                                              ? "Auto is booked"
+                                              : "Auto not booked yet"
+                                              : user['matchingConditions']['autoBooked'] == 1
+                                              ? "Taxi is booked"
+                                              : "Taxi not booked yet",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: user['matchingConditions']['autoBooked'] == 1
+                                                ? Colors.green
+                                                : Colors.red,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
+
                                   SizedBox(height: 8),
                                   Align(
                                     alignment: Alignment.center,

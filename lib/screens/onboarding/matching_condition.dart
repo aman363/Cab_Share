@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iitj_travel/screens/base/bottom_navigation_screen.dart';
-import 'package:iitj_travel/screens/base/home_screen.dart';
 import '../reusable_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,13 +18,16 @@ class _MatchingConditionState extends State<MatchingCondition> {
   String? _selectedDestination;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  String? _selectedModeOfTravel;
   bool _autoBooked = false;
+  int? _selectedVacantSeats;
 
   bool get canContinue =>
       _selectedSource != null &&
           _selectedDestination != null &&
           _selectedDate != null &&
-          _selectedTime != null;
+          _selectedTime != null &&
+          _selectedVacantSeats!= null;
 
   void updateUserMatchingConditions(String uid) {
     String formattedDate = _selectedDate == null
@@ -44,6 +46,8 @@ class _MatchingConditionState extends State<MatchingCondition> {
         'time': formattedTime, // Use the formatted time
         'source': _selectedSource ?? "",
         'destination': _selectedDestination ?? "",
+        'modeOfTravel':_selectedModeOfTravel?? "",
+        'vacantSeats' : _selectedVacantSeats ?? 1,
         'autoBooked': _autoBooked ? 1 : 0,
       },
     });
@@ -182,6 +186,46 @@ class _MatchingConditionState extends State<MatchingCondition> {
               ),
             ),
             SizedBox(height: 20),
+            DropdownButtonFormField<String>(
+              value: _selectedModeOfTravel,
+              hint: Text('Preferred Mode of Travel'),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedModeOfTravel = newValue;
+                });
+              },
+              items: ['Auto', 'Taxi'].map((mode) {
+                return DropdownMenuItem<String>(
+                  value: mode,
+                  child: Text(mode),
+                );
+              }).toList(),
+              decoration: InputDecoration(
+                labelText: 'Preferred Mode of Travel',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            DropdownButtonFormField<int>(
+              value: _selectedVacantSeats,
+              hint: Text('Number of Vacant Seats'),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedVacantSeats = newValue;
+                });
+              },
+              items: [1, 2, 3, 4].map((seats) {
+                return DropdownMenuItem<int>(
+                  value: seats,
+                  child: Text(seats.toString()),
+                );
+              }).toList(),
+              decoration: InputDecoration(
+                labelText: 'Number of Vacant Seats',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
             Row(
               children: [
                 Text(
@@ -209,13 +253,19 @@ class _MatchingConditionState extends State<MatchingCondition> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BottomNavigationScreen(clearButton:false),
+                    builder: (context) => BottomNavigationScreen(clearButton :false),
                   ),
                 );
 
                 // Do something with the entered data
                 // You can navigate to the next screen or perform other actions here
               } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Please fill in all the details.'),
+                    duration: Duration(seconds: 2), // Adjust the duration as needed
+                  ),
+                );
                 String source = _selectedSource ?? 'Data not given';
                 String destination = _selectedDestination ?? 'Data not given';
                 String selectedDate = _selectedDate == null

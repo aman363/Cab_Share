@@ -40,6 +40,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'source':"",
         'destination':"",
         'autoBooked':0,
+        'vacantSeats':0,
+        'modeOfTravel':"",
       },
   });}
   @override

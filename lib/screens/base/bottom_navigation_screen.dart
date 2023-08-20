@@ -254,6 +254,15 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
         body: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
+        floatingActionButton: _selectedIndex == 0
+            ? FloatingActionButton(
+          onPressed: () {
+            // Handle the action when the button is pressed
+          },
+          child: Icon(Icons.add), // Plus icon
+          backgroundColor: Color.fromRGBO(17, 86, 149, 1), // Button color
+        )
+            : null,
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -354,10 +363,27 @@ class CommunicationTab extends StatelessWidget {
     if (timestamp == null) {
       return ''; // Return an empty string or a default value
     }
-    DateTime dateTime = timestamp.toDate();
-    String formattedTime = DateFormat.jm().format(dateTime); // Format time
-    return formattedTime;
+
+    DateTime now = DateTime.now();
+    DateTime messageTime = timestamp.toDate();
+    String formattedTime = DateFormat.jm().format(messageTime); // Format time
+
+    if (messageTime.year == now.year &&
+        messageTime.month == now.month &&
+        messageTime.day == now.day) {
+      // Today's message
+      return "Today, $formattedTime";
+    } else if (messageTime.year == now.year &&
+        messageTime.month == now.month &&
+        messageTime.day == now.day - 1) {
+      // Yesterday's message
+      return "Yesterday, $formattedTime";
+    } else {
+      // Custom date
+      return DateFormat('MMM dd, yyyy').format(messageTime) + ", $formattedTime";
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {

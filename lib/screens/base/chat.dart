@@ -23,6 +23,8 @@ class _ChatPageState extends State<ChatPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   NotificationServices notificationServices= NotificationServices();
   String currentUserUid=FirebaseAuth.instance.currentUser!.uid;
+  DateTime _currentDay = DateTime.now();
+  DateTime _previousDay = DateTime.now().subtract(Duration(days: 1));
 
   void _sendMessage(String message) async {
     _messageController.clear();
@@ -109,6 +111,30 @@ class _ChatPageState extends State<ChatPage> {
     String formattedTime = DateFormat.jm().format(dateTime); // Format time
     return formattedTime;
   }
+
+  String _formatDateHeader(DateTime date) {
+    final DateTime now = DateTime.now();
+    final DateTime yesterday = now.subtract(Duration(days: 1));
+
+    if (date.year == now.year && date.month == now.month && date.day == now.day) {
+      return 'Today';
+    } else if (date.year == yesterday.year && date.month == yesterday.month && date.day == yesterday.day) {
+      return 'Yesterday';
+    } else {
+      return DateFormat('MMM dd, yyyy').format(date);
+    }
+  }
+  Widget _buildDateHeader(DateTime date) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Center(
+        child: Text(
+          _formatDateHeader(date),
+          style: TextStyle(color: Colors.grey),
+        ),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,14 +161,27 @@ class _ChatPageState extends State<ChatPage> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   final List<DocumentSnapshot> documents = snapshot.data!.docs;
-                  final List<Widget> reversedMessages = documents.reversed.map((document) {
+                  Widget _buildMessageWidget(DocumentSnapshot document) {
                     final chat = document.data() as Map<String, dynamic>;
                     final String message = chat['message'];
                     final Timestamp timestamp = chat['time'];
                     final DateTime dateTime = timestamp.toDate();
-                    final String formattedTime = _formatTimestamp(timestamp);
+                    String formattedTime = _formatTimestamp(timestamp);
                     final String from = chat['from'];
                     final bool isCurrentUser = from == FirebaseAuth.instance.currentUser!.uid;
+
+                    if (dateTime.day == _currentDay.day &&
+                        dateTime.month == _currentDay.month &&
+                        dateTime.year == _currentDay.year) {
+                      formattedTime = "Today, $formattedTime";
+                    } else if (dateTime.day == _previousDay.day &&
+                        dateTime.month == _previousDay.month &&
+                        dateTime.year == _previousDay.year) {
+                      formattedTime = "Yesterday, $formattedTime";
+                    } else {
+                      // Update the previous day if the date is different
+                      formattedTime = "${DateFormat('MMM dd').format(dateTime)}, $formattedTime";
+                    }
 
                     return Align(
                       alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -201,7 +240,24 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                       ),
                     );
-                  }).toList();
+                  }
+                  final List<Widget> reversedMessages = [];
+                  DateTime lastMessageDate = DateTime.now().add(Duration(days: 1)); // Initialize with a date in the future
+
+                  for (int i = documents.length - 1; i >= 0; i--) {
+                    final chat = documents[i].data() as Map<String, dynamic>;
+                    final Timestamp timestamp = chat['time'];
+                    final DateTime dateTime = timestamp.toDate();
+
+                    if (dateTime.day != lastMessageDate.day ||
+                        dateTime.month != lastMessageDate.month ||
+                        dateTime.year != lastMessageDate.year) {
+                      lastMessageDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+                      //reversedMessages.add(_buildDateHeader(lastMessageDate));
+                    }
+
+                    reversedMessages.add(_buildMessageWidget(documents[i]));
+                  }
 
                   return ListView(
                     reverse: true, // Reverse the list to have newest messages at the bottom
