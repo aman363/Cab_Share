@@ -4,8 +4,16 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:iitj_travel/services/notification_services.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:iitj_travel/screens/base/chat.dart';
 
 class RequestsEstablishedPage extends StatelessWidget {
+
+  String getChatRoomId(String uid1, String uid2) {
+    List<String> uids = [uid1, uid2];
+    uids.sort(); // Sort the UIDs to ensure consistency
+    return "${uids[0]}@${uids[1]}";
+  }
+
   final String currentUserUid;
 
   RequestsEstablishedPage({required this.currentUserUid});
@@ -219,6 +227,15 @@ class RequestsEstablishedPage extends StatelessWidget {
                                         SizedBox(width: 15), // Add some spacing between buttons
                                         ElevatedButton(
                                           onPressed: () async {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => ChatPage(
+                                                  chatRoomId: getChatRoomId(currentUserUid, userId),
+                                                  userName: user['basicInfo']['name'],
+                                                ),
+                                              ),
+                                            );
                                           },
                                           child: Row(
                                             children: [

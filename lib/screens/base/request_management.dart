@@ -273,7 +273,13 @@ class RequestsReceivedPage extends StatelessWidget {
                                             await updateSeatsFilled(userId, currentSeatsFilledOppositeUser);
 
                                           },
-                                          child: Text("Accept"),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.check_circle), // Message icon
+                                              SizedBox(width: 8), // Add spacing between icon and text
+                                              Text("Accept"),
+                                            ],
+                                          ),
                                           style: ElevatedButton.styleFrom(
                                             primary: const Color.fromRGBO(17, 86, 149, 1),
                                             padding: EdgeInsets.symmetric(
@@ -308,7 +314,13 @@ class RequestsReceivedPage extends StatelessWidget {
                                               'requestSent': FieldValue.arrayRemove([currentUserId]),
                                             });
                                           },
-                                          child: Text("Decline"),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.cancel), // Message icon
+                                              SizedBox(width: 8), // Add spacing between icon and text
+                                              Text("Decline"),
+                                            ],
+                                          ),
                                           style: ElevatedButton.styleFrom(
                                             primary: Colors.red, // Use a different color for the decline button
                                             padding: EdgeInsets.symmetric(
