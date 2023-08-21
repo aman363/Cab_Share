@@ -45,6 +45,12 @@ class RequestsReceivedPage extends StatelessWidget {
   RequestsReceivedPage({required this.currentUserUid});
   NotificationServices notificationServices= NotificationServices();
 
+  Future<void> updateSeatsFilled(String userId, int newValue) async {
+    await FirebaseFirestore.instance.collection("Profile").doc(userId).update({
+      'matchingConditions.seatsFilled': newValue,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
@@ -258,6 +264,13 @@ class RequestsReceivedPage extends StatelessWidget {
 
                                             // Create the "chats" subcollection within the newly created document
                                             await FirebaseFirestore.instance.collection("ChatRooms").doc(chatRoomId).collection("chats").doc().set({});
+
+                                            int currentSeatsFilledCurrentUser = userSnapshot.data!['matchingConditions']['seatsFilled'] + 1;
+                                            await updateSeatsFilled(currentUserUid, currentSeatsFilledCurrentUser);
+
+                                            // Update seatsFilled for the opposite user
+                                            int currentSeatsFilledOppositeUser = user['matchingConditions']['seatsFilled'] + 1;
+                                            await updateSeatsFilled(userId, currentSeatsFilledOppositeUser);
 
                                           },
                                           child: Text("Accept"),

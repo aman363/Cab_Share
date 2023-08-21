@@ -11,6 +11,13 @@ class RequestsEstablishedPage extends StatelessWidget {
   RequestsEstablishedPage({required this.currentUserUid});
   NotificationServices notificationServices= NotificationServices();
 
+  Future<void> updateSeatsFilled(String userId, int newValue) async {
+    int finalValue = newValue >= 0 ? newValue : 0;
+    await FirebaseFirestore.instance.collection("Profile").doc(userId).update({
+      'matchingConditions.seatsFilled': finalValue,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
@@ -327,7 +334,12 @@ class RequestsEstablishedPage extends StatelessWidget {
                                                       "Chat room document doesn't exist");
                                                 }
                                               }
+                                              int currentSeatsFilledCurrentUser = userSnapshot.data!['matchingConditions']['seatsFilled'] - 1;
+                                              await updateSeatsFilled(currentUserUid, currentSeatsFilledCurrentUser);
 
+                                              // Update seatsFilled for the opposite user
+                                              int currentSeatsFilledOppositeUser = user['matchingConditions']['seatsFilled'] - 1;
+                                              await updateSeatsFilled(userId, currentSeatsFilledOppositeUser);
                                             }
 
                                           },

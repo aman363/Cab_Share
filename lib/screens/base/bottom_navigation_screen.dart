@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:iitj_travel/screens/base/chat.dart';
+import 'package:iitj_travel/screens/base/mycard.dart';
 import 'package:iitj_travel/screens/base/request_established.dart';
 import 'package:iitj_travel/screens/onboarding/matching_condition.dart';
 import 'package:intl/intl.dart';
@@ -261,7 +262,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MatchingCondition()
+                builder: (context) => MyCard()
               ),
             );
             // Handle the action when the button is pressed

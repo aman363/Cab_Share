@@ -72,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
           return StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection("Profile")
-                .where('matchingConditions.source', isNotEqualTo: '')
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -82,7 +81,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 user['uid'] != currentUserUid && // Exclude current user
                     !requestSent.contains(user['uid']) && // Exclude users in requestSent
                     !requestReceived.contains(user['uid']) && // Exclude users in requestReceived
-                    !requestEstablished.contains(user['uid'])) // Exclude users in requestEstablished
+                    !requestEstablished.contains(user['uid']) &&
+                    user['matchingConditions'] != null &&// Exclude users in requestEstablished
+                user['matchingConditions']['source'] != '' && // Source is not empty
+                    user['matchingConditions']['seatsFilled'] <
+                        user['matchingConditions']['vacantSeats'])
                     .toList();
                 String formattedSelectedDate = "${selectedDate?.day.toString().padLeft(2, '0')}-${selectedDate?.month.toString().padLeft(2, '0')}-${selectedDate?.year}";
 
