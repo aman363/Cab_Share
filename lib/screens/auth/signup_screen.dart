@@ -41,6 +41,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'destination':"",
         'autoBooked':0,
         'vacantSeats':0,
+        'seatsFilled':0,
         'modeOfTravel':"",
       },
   });}

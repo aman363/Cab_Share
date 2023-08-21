@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:iitj_travel/screens/base/chat.dart';
 import 'package:iitj_travel/screens/base/request_established.dart';
+import 'package:iitj_travel/screens/onboarding/matching_condition.dart';
 import 'package:intl/intl.dart';
 import './home_screen.dart';
 import './mypage.dart';
@@ -257,6 +258,12 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
         floatingActionButton: _selectedIndex == 0
             ? FloatingActionButton(
           onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MatchingCondition()
+              ),
+            );
             // Handle the action when the button is pressed
           },
           child: Icon(Icons.add), // Plus icon

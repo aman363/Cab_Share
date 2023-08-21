@@ -48,6 +48,7 @@ class _MatchingConditionState extends State<MatchingCondition> {
         'destination': _selectedDestination ?? "",
         'modeOfTravel':_selectedModeOfTravel?? "",
         'vacantSeats' : _selectedVacantSeats ?? 1,
+        'seatsFilled' :0,
         'autoBooked': _autoBooked ? 1 : 0,
       },
     });
