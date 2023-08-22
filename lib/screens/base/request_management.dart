@@ -6,6 +6,26 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
+Widget buildAvatar(Map<String, dynamic> user) {
+  String imageUrl = user['basicInfo']['image'];
+  if (imageUrl != null && imageUrl.isNotEmpty) {
+    return CircleAvatar(
+      radius: 40,
+      backgroundImage: NetworkImage(imageUrl),
+    );
+  } else {
+    return CircleAvatar(
+      radius: 40,
+      backgroundColor: Colors.grey,
+      child: Icon(
+        Icons.person,
+        color: Colors.white,
+        size: 40,
+      ),
+    );
+  }
+}
+
 class RequestManagementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -106,16 +126,54 @@ class RequestsReceivedPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              color: Color.fromRGBO(169, 210, 255, 1.0), // Blue color
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-                              width: double.infinity, // Make the color strip extend to full width
-                              child: Text(
-                                "${user!['basicInfo']['name'].toUpperCase()}",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(14, 77, 141, 1.0), // White text color
+                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Color.fromRGBO(169, 210, 255, 1.0),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10),
                                 ),
+                              ),
+                              child: Row(
+                                children: [
+                                  // Display circular avatar based on user's image availability
+                                  buildAvatar(user),
+                                  SizedBox(width: 8),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${user['basicInfo']['name'].toUpperCase()}",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color.fromRGBO(14, 77, 141, 1.0),
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "${user['matchingConditions']['source'].toUpperCase()}",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Icon(Icons.arrow_forward, color: Colors.grey),
+                                          Text(
+                                            "${user['matchingConditions']['destination'].toUpperCase()}",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                             Padding(
@@ -123,30 +181,6 @@ class RequestsReceivedPage extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(height: 8),
-                                  Center(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "${user['matchingConditions']['source'].toUpperCase()}",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Icon(Icons.arrow_forward, color: Colors.grey), // Arrow icon
-                                        Text(
-                                          "${user['matchingConditions']['destination'].toUpperCase()}",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
                                   Text(
                                     "Date: ${user['matchingConditions']['date']}",
                                     style: TextStyle(
@@ -424,16 +458,54 @@ class RequestsSentPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              color: Color.fromRGBO(169, 210, 255, 1.0), // Blue color
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-                              width: double.infinity, // Make the color strip extend to full width
-                              child: Text(
-                                "${user!['basicInfo']['name'].toUpperCase()}",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(14, 77, 141, 1.0), // White text color
+                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Color.fromRGBO(169, 210, 255, 1.0),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10),
                                 ),
+                              ),
+                              child: Row(
+                                children: [
+                                  // Display circular avatar based on user's image availability
+                                  buildAvatar(user),
+                                  SizedBox(width: 8),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${user['basicInfo']['name'].toUpperCase()}",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color.fromRGBO(14, 77, 141, 1.0),
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "${user['matchingConditions']['source'].toUpperCase()}",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Icon(Icons.arrow_forward, color: Colors.grey),
+                                          Text(
+                                            "${user['matchingConditions']['destination'].toUpperCase()}",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                             Padding(
@@ -441,30 +513,6 @@ class RequestsSentPage extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(height: 8),
-                                  Center(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "${user['matchingConditions']['source'].toUpperCase()}",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Icon(Icons.arrow_forward, color: Colors.grey), // Arrow icon
-                                        Text(
-                                          "${user['matchingConditions']['destination'].toUpperCase()}",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
                                   Text(
                                     "Date: ${user['matchingConditions']['date']}",
                                     style: TextStyle(

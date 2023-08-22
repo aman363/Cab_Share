@@ -31,16 +31,54 @@ class MyCard extends StatelessWidget {
                     children: [
 
                       Container(
-                        color: Color.fromRGBO(169, 210, 255, 1.0),
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                         width: double.infinity,
-                        child: Text(
-                          "${user['basicInfo']['name'].toUpperCase()}",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(14, 77, 141, 1.0),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(169, 210, 255, 1.0),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
                           ),
+                        ),
+                        child: Row(
+                          children: [
+                            // Display circular avatar based on user's image availability
+                            buildAvatar(user),
+                            SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${user['basicInfo']['name'].toUpperCase()}",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromRGBO(14, 77, 141, 1.0),
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "${user['matchingConditions']['source'].toUpperCase()}",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Icon(Icons.arrow_forward, color: Colors.grey),
+                                    Text(
+                                      "${user['matchingConditions']['destination'].toUpperCase()}",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                       Padding(
@@ -48,30 +86,6 @@ class MyCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: 8),
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "${user['matchingConditions']['source'].toUpperCase()}",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Icon(Icons.arrow_forward, color: Colors.grey),
-                                  Text(
-                                    "${user['matchingConditions']['destination'].toUpperCase()}",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 8),
                             Text(
                               "Date: ${user['matchingConditions']['date']}",
                               style: TextStyle(
@@ -225,5 +239,24 @@ class MyCard extends StatelessWidget {
         ),
       ),
     );
+  }
+  Widget buildAvatar(Map<String, dynamic> user) {
+    String imageUrl = user['basicInfo']['image'];
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      return CircleAvatar(
+        radius: 40,
+        backgroundImage: NetworkImage(imageUrl),
+      );
+    } else {
+      return CircleAvatar(
+        radius: 40,
+        backgroundColor: Colors.grey,
+        child: Icon(
+          Icons.person,
+          color: Colors.white,
+          size: 40,
+        ),
+      );
+    }
   }
 }
