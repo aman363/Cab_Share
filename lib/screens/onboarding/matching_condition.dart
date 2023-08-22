@@ -70,9 +70,9 @@ class _MatchingConditionState extends State<MatchingCondition> {
 
     String formattedTime = _selectedTime == null
         ? ""
-        : TimeOfDay.fromDateTime(
+        : DateFormat('hh:mm a').format(
       DateTime(0, 1, 1, _selectedTime!.hour, _selectedTime!.minute),
-    ).format(context); // Format the time
+    ); // Format the time
 
     FirebaseFirestore.instance.collection("Profile").doc(uid).update({
       'matchingConditions': {
@@ -214,9 +214,11 @@ class _MatchingConditionState extends State<MatchingCondition> {
                 }
               },
               child: Text(
-                _selectedTime == null
-                    ? 'Select Time'
-                    : 'Time: ${_selectedTime!.hour}:${_selectedTime!.minute}',
+                  _selectedTime == null
+                      ? 'No time selected'
+                      : DateFormat('hh:mm a').format(
+                    DateTime(0, 1, 1, _selectedTime!.hour, _selectedTime!.minute),
+                  ),
                 style: TextStyle(fontSize: 16), // Adjust font size
               ),
             ),

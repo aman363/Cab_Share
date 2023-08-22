@@ -26,6 +26,26 @@ Widget buildAvatar(Map<String, dynamic> user) {
   }
 }
 
+String formatDateString(String dateStr) {
+  // Split the date string into day, month, and year
+  List<String> parts = dateStr.split('-');
+
+  if (parts.length >= 3) {
+    // Create a map to map month numbers to month names
+    Map<String, String> monthMap = {
+      '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr', '05': 'May', '06': 'Jun',
+      '07': 'Jul', '08': 'Aug', '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'
+    };
+
+    // Format the date
+    String formattedDate = "${monthMap[parts[1]]} ${parts[0]}, ${parts[2]}";
+    return formattedDate;
+  } else {
+    // Return the original date string if it couldn't be split correctly
+    return dateStr;
+  }
+}
+
 class RequestManagementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -182,14 +202,7 @@ class RequestsReceivedPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Date: ${user['matchingConditions']['date']}",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Time: ${user['matchingConditions']['time']}",
+                                    "Date: ${formatDateString(user['matchingConditions']['date'])} at ${user['matchingConditions']['time']}",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -514,14 +527,7 @@ class RequestsSentPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Date: ${user['matchingConditions']['date']}",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Time: ${user['matchingConditions']['time']}",
+                                    "Date: ${formatDateString(user['matchingConditions']['date'])} at ${user['matchingConditions']['time']}",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
