@@ -29,6 +29,40 @@ class _MatchingConditionState extends State<MatchingCondition> {
           _selectedTime != null &&
           _selectedVacantSeats!= null;
 
+  @override
+  void initState() {
+    super.initState();
+    fetchMatchingConditions(); // Fetch and set initial matching conditions
+  }
+
+  void fetchMatchingConditions() async {
+    String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection("Profile")
+        .doc(currentUserUid)
+        .get();
+
+    var user = snapshot.data() as Map<String, dynamic>;
+    setState(() {
+      if(user['matchingConditions']['source']!="" && user['matchingConditions']['destination']!="" ) {
+          _selectedSource = user['matchingConditions']['source'];
+          _selectedDestination = user['matchingConditions']['destination'];
+      }
+      _selectedDate = user['matchingConditions']['date'].isEmpty
+          ? null
+          : DateFormat('dd-MM-yyyy').parse(user['matchingConditions']['date']);
+      _selectedTime = user['matchingConditions']['time'].isEmpty
+          ? null
+          : TimeOfDay.fromDateTime(
+          DateFormat('HH:mm').parse(user['matchingConditions']['time']));
+      if(user['matchingConditions']['modeOfTravel']!="")
+        _selectedModeOfTravel = user['matchingConditions']['modeOfTravel'];
+      if(user['matchingConditions']['vacantSeats']>0 && user['matchingConditions']['vacantSeats']<=4)
+        _selectedVacantSeats = user['matchingConditions']['vacantSeats'];
+      _autoBooked = user['matchingConditions']['autoBooked'] == 1;
+    });
+  }
+
   void updateUserMatchingConditions(String uid) {
     String formattedDate = _selectedDate == null
         ? ""

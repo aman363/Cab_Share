@@ -4,8 +4,76 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iitj_travel/screens/onboarding/matching_condition.dart';
 import '../auth/main_screen.dart';
 import '../auth/shared_preference_services.dart';
+import 'package:image_picker/image_picker.dart'; // Add this import
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+//import 'package:image_cropper/image_cropper.dart';
+import 'dart:io';
 
-class MyPage extends StatelessWidget {
+class MyPage extends StatefulWidget {
+  @override
+  _MyPageState createState() => _MyPageState();
+}
+
+class _MyPageState extends State<MyPage> {
+  final ImagePicker _picker = ImagePicker();
+  String? imageUrl;
+
+  Widget _buildUploadDialog(BuildContext context) {
+    return AlertDialog(
+      title: Text('Upload Profile Picture'),
+      content: Text('Select an option to upload a profile picture:'),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            // Take a photo using the camera
+            Navigator.of(context).pop();
+            final pickedFile = await _picker.pickImage(
+              source: ImageSource.camera,
+            );
+            if (pickedFile != null) {
+              _uploadAndSetImage(File(pickedFile.path));
+            }
+          },
+          child: Text('Upload from Camera'),
+        ),
+        TextButton(
+          onPressed: () async {
+            // Choose an image from the gallery
+            Navigator.of(context).pop();
+            final pickedFile = await _picker.pickImage(
+              source: ImageSource.gallery,
+            );
+            if (pickedFile != null) {
+              _uploadAndSetImage(File(pickedFile.path));
+            }
+          },
+          child: Text('Upload from Gallery'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _uploadAndSetImage(File imageFile) async {
+    // Upload the image to Firebase Storage
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    String imageName = 'profile_image_$uid.jpg';
+    firebase_storage.Reference storageRef =
+    firebase_storage.FirebaseStorage.instance.ref().child('ProfileImage').child(imageName);
+
+    final uploadTask = storageRef.putFile(imageFile);
+    await uploadTask;
+
+    imageUrl = await storageRef.getDownloadURL();
+
+    // Update the user's data with the image URL
+    await FirebaseFirestore.instance
+        .collection("Profile")
+        .doc(uid)
+        .update({'basicInfo.image': imageUrl});
+
+    setState(() {}); // Refresh the UI
+  }
+
   Future<Map<String, dynamic>> fetchUserData(String uid) async {
     DocumentSnapshot userSnapshot =
     await FirebaseFirestore.instance.collection("Profile").doc(uid).get();
@@ -15,6 +83,27 @@ class MyPage extends StatelessWidget {
       return {}; // Return an empty map if user doesn't exist
     }
   }
+
+  CircleAvatar buildCircleAvatar(String imageUrl, String currentUserName) {
+    if (imageUrl.isEmpty) {
+      return CircleAvatar(
+        radius: 50,
+        backgroundColor: Colors.grey,
+        child: Icon(
+          Icons.person,
+          color: Colors.white,
+          size: 40,
+        ),
+      );
+    } else {
+      return CircleAvatar(
+        radius: 50,
+        backgroundColor: Colors.grey,
+        backgroundImage: NetworkImage(imageUrl),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +138,9 @@ class MyPage extends StatelessWidget {
                       Stack(
                         alignment: Alignment.bottomRight,
                         children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Colors.grey,
-                            child: Icon(
-                              Icons.person,
-                              color: Colors.white,
-                              size: 40,
-                            ),
+                          buildCircleAvatar(
+                            userData['basicInfo']['image'] ?? '',
+                            currentUserName,
                           ),
                           Container(
                             decoration: BoxDecoration(
@@ -75,10 +159,19 @@ class MyPage extends StatelessWidget {
                               radius: 14,
                               backgroundColor:
                               Colors.white,
-                              child: Icon(
-                                Icons.camera_alt,
-                                color: Color.fromRGBO(17, 86, 149, 1),
-                                size: 18,
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Display the upload dialog when the camera icon is pressed
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => _buildUploadDialog(context),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: Color.fromRGBO(17, 86, 149, 1),
+                                  size: 18,
+                                ),
                               ),
                             ),
                           ),

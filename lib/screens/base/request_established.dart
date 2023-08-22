@@ -362,7 +362,7 @@ class RequestsEstablishedPage extends StatelessWidget {
                                           },
                                           child: Row(
                                             children: [
-                                              Icon(Icons.clear), // Call icon
+                                              Icon(Icons.cancel), // Call icon
                                               SizedBox(width: 8), // Add spacing between icon and text
                                               Text("Cancel"),
                                             ],
