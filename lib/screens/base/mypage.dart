@@ -20,34 +20,58 @@ class _MyPageState extends State<MyPage> {
 
   Widget _buildUploadDialog(BuildContext context) {
     return AlertDialog(
-      title: Text('Upload Profile Picture'),
-      content: Text('Select an option to upload a profile picture:'),
+      contentPadding: EdgeInsets.zero, // Remove content padding
+      titlePadding: EdgeInsets.zero, // Remove title padding
+      title: SizedBox.shrink(), // Empty title
+      content: SizedBox.shrink(), // Empty content
+      contentTextStyle: TextStyle(fontSize: 0), // Hide content text
+      buttonPadding: EdgeInsets.zero, // Remove button padding
       actions: [
-        TextButton(
-          onPressed: () async {
-            // Take a photo using the camera
-            Navigator.of(context).pop();
-            final pickedFile = await _picker.pickImage(
-              source: ImageSource.camera,
-            );
-            if (pickedFile != null) {
-              _uploadAndSetImage(File(pickedFile.path));
-            }
-          },
-          child: Text('Upload from Camera'),
-        ),
-        TextButton(
-          onPressed: () async {
-            // Choose an image from the gallery
-            Navigator.of(context).pop();
-            final pickedFile = await _picker.pickImage(
-              source: ImageSource.gallery,
-            );
-            if (pickedFile != null) {
-              _uploadAndSetImage(File(pickedFile.path));
-            }
-          },
-          child: Text('Upload from Gallery'),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          width: double.infinity, // Make the container take up the full width
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(color: Colors.grey), // Add a top border
+              bottom: BorderSide(color: Colors.grey), // Add a bottom border
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  // Take a photo using the camera
+                  Navigator.of(context).pop();
+                  final pickedFile = await _picker.pickImage(
+                    source: ImageSource.camera,
+                  );
+                  if (pickedFile != null) {
+                    _uploadAndSetImage(File(pickedFile.path));
+                  }
+                },
+                child: Text('Upload from Camera', style: TextStyle(color: Colors.black,fontSize: 16)),
+              ),
+              Divider(
+                color: Colors.grey, // Add a line divider between buttons
+                height: 0, // Standard height for divider
+                thickness: 1, // Thickness of the line
+              ),
+              TextButton(
+                onPressed: () async {
+                  // Choose an image from the gallery
+                  Navigator.of(context).pop();
+                  final pickedFile = await _picker.pickImage(
+                    source: ImageSource.gallery,
+                  );
+                  if (pickedFile != null) {
+                    _uploadAndSetImage(File(pickedFile.path));
+                  }
+                },
+                child: Text('Upload from Gallery', style: TextStyle(color: Colors.black,fontSize: 16)),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -228,15 +252,45 @@ class _MyPageState extends State<MyPage> {
                       ),
                     ),
                     child: const Text(
-                      "Set Travel Details",
+                      "Set/Update Travel Details",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 4),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Navigate to MatchingCondition screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MatchingCondition(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color.fromRGBO(17, 86, 149, 1),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      "Contact Us",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
                   ElevatedButton.icon(
                     onPressed: () {
                       // Logout functionality
@@ -265,12 +319,33 @@ class _MyPageState extends State<MyPage> {
                     label: const Text(
                       "Logout",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Color.fromRGBO(17, 86, 149, 1),
                       ),
                     ),
                   ),
+                  Spacer(),
+                  Center(
+                    child: Text(
+                      "v1.0.0",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Center(
+                    child: Text(
+                      "Developed by: Aman Srivastava & Dr. Arpit Khandelwal",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
                 ],
               ),
             ),

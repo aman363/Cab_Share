@@ -248,7 +248,7 @@ class RequestsEstablishedPage extends StatelessWidget {
                                             children: [
                                               Icon(Icons.message), // Message icon
                                               SizedBox(width: 8), // Add spacing between icon and text
-                                              Text("Message"),
+                                              Text("Chat"),
                                             ],
                                           ),
                                           style: ElevatedButton.styleFrom(

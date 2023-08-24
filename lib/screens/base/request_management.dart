@@ -603,7 +603,7 @@ class RequestsSentPage extends StatelessWidget {
                                     },
                                       child: Text("Cancel"),
                                       style: ElevatedButton.styleFrom(
-                                        primary: const Color.fromRGBO(17, 86, 149, 1),
+                                        primary: Colors.red,
                                         padding: EdgeInsets.symmetric(
                                           horizontal: 20,
                                           vertical: 13,

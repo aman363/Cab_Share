@@ -1,10 +1,8 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:iitj_travel/screens/base/chat.dart';
 import 'package:iitj_travel/screens/base/mycard.dart';
 import 'package:iitj_travel/screens/base/request_established.dart';
-import 'package:iitj_travel/screens/onboarding/matching_condition.dart';
 import 'package:intl/intl.dart';
 import './home_screen.dart';
 import './mypage.dart';
