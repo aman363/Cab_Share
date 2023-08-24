@@ -9,6 +9,7 @@ import './mypage.dart';
 import './request_management.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
   final bool clearButton;
@@ -214,13 +215,17 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // If on the home screen, exit the app directly
-        if (_selectedIndex == 0) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          // This will pop all routes until the first screen (home screen)
+        if (_selectedIndex != 0) {
+          // If not in the "Commuters" tab, navigate to the "Commuters" tab
+          setState(() {
+            _selectedIndex = 0;
+          });
+          return false; // Prevent default back button behavior
+        }else {
+          SystemNavigator.pop();
+          return true;
         }
-        // For other screens, allow normal back navigation
-        return true;
+         // Allow default back button behavior
       },
       child: Scaffold(
         appBar: AppBar(

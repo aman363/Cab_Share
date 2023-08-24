@@ -162,9 +162,18 @@ class _MyPageState extends State<MyPage> {
                       Stack(
                         alignment: Alignment.bottomRight,
                         children: [
-                          buildCircleAvatar(
-                            userData['basicInfo']['image'] ?? '',
-                            currentUserName,
+                          GestureDetector(
+                            onTap: () {
+                              // Display the upload dialog when the person icon is pressed
+                              showDialog(
+                                context: context,
+                                builder: (context) => _buildUploadDialog(context),
+                              );
+                            },
+                            child: buildCircleAvatar(
+                              userData['basicInfo']['image'] ?? '',
+                              currentUserName,
+                            ),
                           ),
                           Container(
                             decoration: BoxDecoration(

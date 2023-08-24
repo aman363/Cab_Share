@@ -6,15 +6,20 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
-Widget buildAvatar(Map<String, dynamic> user) {
+Widget buildAvatar(BuildContext context, Map<String, dynamic> user) {
   String imageUrl = user['basicInfo']['image'];
-  if (imageUrl != null && imageUrl.isNotEmpty) {
-    return CircleAvatar(
+  return GestureDetector(
+    onTap: () {
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        _showLargerImage(context, imageUrl); // Pass context here
+      }
+    },
+    child: imageUrl != null && imageUrl.isNotEmpty
+        ? CircleAvatar(
       radius: 40,
       backgroundImage: NetworkImage(imageUrl),
-    );
-  } else {
-    return CircleAvatar(
+    )
+        : CircleAvatar(
       radius: 40,
       backgroundColor: Colors.grey,
       child: Icon(
@@ -22,8 +27,48 @@ Widget buildAvatar(Map<String, dynamic> user) {
         color: Colors.white,
         size: 40,
       ),
-    );
-  }
+    ),
+  );
+}
+
+void _showLargerImage(BuildContext context, String imageUrl) {
+  showModalBottomSheet(
+    context: context,
+    builder: (context) {
+      return Container(
+        height: 300,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            SizedBox(height: 16),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the bottom sheet
+              },
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  color: Color.fromRGBO(17, 86, 149, 1), // Desired color
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }
 
 String formatDateString(String dateStr) {
@@ -158,7 +203,7 @@ class RequestsReceivedPage extends StatelessWidget {
                               child: Row(
                                 children: [
                                   // Display circular avatar based on user's image availability
-                                  buildAvatar(user),
+                                  buildAvatar(context,user),
                                   SizedBox(width: 8),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -491,7 +536,7 @@ class RequestsSentPage extends StatelessWidget {
                               child: Row(
                                 children: [
                                   // Display circular avatar based on user's image availability
-                                  buildAvatar(user),
+                                  buildAvatar(context, user),
                                   SizedBox(width: 8),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,

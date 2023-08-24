@@ -358,13 +358,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   Widget buildAvatar(Map<String, dynamic> user) {
     String imageUrl = user['basicInfo']['image'];
-    if (imageUrl != null && imageUrl.isNotEmpty) {
-      return CircleAvatar(
+    return GestureDetector(
+      onTap: () {
+        if (imageUrl != null && imageUrl.isNotEmpty) {
+          _showLargerImage(imageUrl); // Show larger image when tapped
+        }
+      },
+      child: imageUrl != null && imageUrl.isNotEmpty
+          ? CircleAvatar(
         radius: 40,
         backgroundImage: NetworkImage(imageUrl),
-      );
-    } else {
-      return CircleAvatar(
+      )
+          : CircleAvatar(
         radius: 40,
         backgroundColor: Colors.grey,
         child: Icon(
@@ -372,8 +377,48 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.white,
           size: 40,
         ),
-      );
-    }
+      ),
+    );
+  }
+
+  void _showLargerImage(String imageUrl) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 300,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: NetworkImage(imageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close the bottom sheet
+                },
+                child: Text(
+                  'Close',
+                  style: TextStyle(
+                    color: Color.fromRGBO(17, 86, 149, 1), // Desired color
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
   String formatDateString(String dateStr) {
     // Split the date string into day, month, and year
@@ -394,5 +439,6 @@ class _HomeScreenState extends State<HomeScreen> {
       return dateStr;
     }
   }
+
 }
 
