@@ -32,7 +32,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   ];
 
   static final List<String> _appBarTitles = <String>[
-    'Travellers',
+    'Commuters',
     'Request Management',
     'Messages',
     'My Page',
@@ -280,8 +280,8 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.people),
-              label: 'Travellers',
+              icon: Icon(Icons.groups),
+              label: 'Commuters',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.mark_email_read_sharp),

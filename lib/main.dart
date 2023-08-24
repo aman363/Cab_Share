@@ -2,9 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:iitj_travel/screens/auth/main_screen.dart';
-import 'package:iitj_travel/screens/base/bottom_navigation_screen.dart';
-import 'package:iitj_travel/screens/onboarding/matching_condition.dart';
-import 'package:iitj_travel/screens/onboarding/onboarding.dart';
+import './screens/auth/shared_preference_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +13,17 @@ void main() async {
     projectId: "iitj-travel-e12d2", ), );
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  // Check if the flag is not set (first time install)
+  bool isFirstTimeInstall = prefs.getBool('firstTimeInstall') ?? true;
+
+  if (isFirstTimeInstall) {
+    // Set the initial value to false
+    await prefs.setBool('firstTimeInstall', false);
+    SharedPreferencesService.updateBoolValue(false);
+    // Set any other initial values if needed
+  }
   runApp(const MyApp());
 }
 
@@ -51,5 +61,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 
 

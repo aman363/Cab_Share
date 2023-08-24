@@ -133,7 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                           if (!_emailIsValid(_emailTextController.text)) {
                               setState(() {
-                              sr = "*Signup with your IITJ account";
+                              sr = "*The email address is badly formatted";
                               });
                               }
                           else if (_passwordTextController.text.length < 6) {
@@ -181,7 +181,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
   bool _emailIsValid(String email) {
-    final emailRegExp = RegExp(r'^[\w-]+(\.[\w-]+)*@iitj\.ac\.in$');
+    final emailRegExp = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
     return emailRegExp.hasMatch(email);
   }
 }
