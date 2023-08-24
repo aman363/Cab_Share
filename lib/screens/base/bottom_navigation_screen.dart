@@ -60,6 +60,12 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       ),
     );
   }
+  final Map<int, Color> tabColors = {
+    0: Color.fromRGBO(17, 86, 149, 1),   // Travellers
+    1: Colors.purple, // Requests
+    2: Colors.indigoAccent,  // Messages
+    3: Colors.deepOrange, // My Page
+  };
 
   String? selectedSource;
   String? selectedDestination;
@@ -269,7 +275,9 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           backgroundColor: Color.fromRGBO(17, 86, 149, 1), // Button color
         )
             : null,
+
         bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.people),
@@ -277,7 +285,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.mark_email_read_sharp),
-              label: 'Request Manage',
+              label: 'Requests',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.message),
@@ -289,9 +297,10 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Color.fromRGBO(17, 86, 149, 1),
+          selectedItemColor: tabColors[_selectedIndex] ?? Colors.black,
           unselectedItemColor: Colors.grey,
           onTap: _onItemTapped,
+          showUnselectedLabels: true,
         ),
       ),
     );
