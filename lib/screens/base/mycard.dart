@@ -123,18 +123,26 @@ class MyCard extends StatelessWidget {
                                     ],
                                   ),
                                   Row(
-                                    children: [
-                                      Icon(Icons.person, size: 24),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        "${user['matchingConditions']['seatsFilled'].toString()}/${user['matchingConditions']['vacantSeats'].toString()}",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    children: List.generate(user['matchingConditions']['vacantSeats'], (index) {
+                                      if (index < user['matchingConditions']['seatsFilled']) {
+                                        return ColorFiltered(
+                                          colorFilter: ColorFilter.mode(
+                                            Colors.red, // Red color for filled seats
+                                            BlendMode.srcIn,
+                                          ),
+                                          child: Image.asset('assets/seat.png', width: 25, height: 25),
+                                        );
+                                      } else {
+                                        return ColorFiltered(
+                                          colorFilter: ColorFilter.mode(
+                                            Colors.green, // Green color for vacant seats
+                                            BlendMode.srcIn,
+                                          ),
+                                          child: Image.asset('assets/seat.png', width: 25, height: 25),
+                                        );
+                                      }
+                                    }),
+                                  )
                                 ],
                               ),
                             SizedBox(height: 8),
