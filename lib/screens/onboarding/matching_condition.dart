@@ -117,7 +117,7 @@ class _MatchingConditionState extends State<MatchingCondition> {
                         _selectedSource = newValue;
                       });
                     },
-                    items: ['IIT Jodhpur', 'Station', 'Airport', 'City']
+                    items: ['IIT Jodhpur','NIFT','Ayurveda', 'Station', 'Airport', 'City']
                         .map((location) {
                       return DropdownMenuItem<String>(
                         value: location,
@@ -149,7 +149,7 @@ class _MatchingConditionState extends State<MatchingCondition> {
                         _selectedDestination = newValue;
                       });
                     },
-                    items: ['IIT Jodhpur', 'Station', 'Airport', 'City']
+                    items: ['IIT Jodhpur','NIFT','Ayurveda', 'Station', 'Airport', 'City']
                         .map((location) {
                       return DropdownMenuItem<String>(
                         value: location,

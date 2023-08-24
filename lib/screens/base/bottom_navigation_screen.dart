@@ -32,7 +32,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   ];
 
   static final List<String> _appBarTitles = <String>[
-    'Matching Users',
+    'Travellers',
     'Request Management',
     'Messages',
     'My Page',
@@ -89,7 +89,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
                         selectedSource = newValue;
                       });
                     },
-                    items: ['IIT Jodhpur', 'Station', 'Airport', 'City']
+                    items: ['IIT Jodhpur', 'NIFT','Ayurveda', 'Station', 'Airport', 'City']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -105,7 +105,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
                         selectedDestination = newValue;
                       });
                     },
-                    items: ['IIT Jodhpur', 'Station', 'Airport', 'City']
+                    items: ['IIT Jodhpur','NIFT','Ayurveda', 'Station', 'Airport', 'City']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -273,7 +273,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.people),
-              label: 'Matching Users',
+              label: 'Travellers',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.mark_email_read_sharp),

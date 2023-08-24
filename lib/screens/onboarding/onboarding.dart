@@ -16,9 +16,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final TextEditingController _mobileController = TextEditingController();
   String? _selectedHostel;
 
-  List<String> _hostelOptions = [
-    'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'B1', 'B2', 'B3', 'B4', 'B5',
-    'I2', 'I3', 'Y4', 'O3', 'O4', 'Other'
+  List<String> _collegeOptions = [
+    'IIT Jodhpur', 'NIFT Jodhpur', 'Ayurveda'
   ];
 
   @override
@@ -36,7 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Welcome to our app!',
+                'Welcome',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: const Color.fromRGBO(17, 86, 149, 1)),
               ),
               SizedBox(height: 20),
@@ -88,14 +87,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           _selectedHostel = newValue;
                         });
                       },
-                      items: _hostelOptions.map((hostel) {
+                      items: _collegeOptions.map((hostel) {
                         return DropdownMenuItem<String>(
                           value: hostel,
                           child: Text(hostel),
                         );
                       }).toList(),
                       decoration: InputDecoration(
-                        labelText: 'Select Hostel',
+                        labelText: 'Select College',
                         border: OutlineInputBorder(
                           borderSide: BorderSide(color: const Color.fromRGBO(17, 86, 149, 1)),
                         ),

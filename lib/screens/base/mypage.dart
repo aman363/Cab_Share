@@ -227,7 +227,7 @@ class _MyPageState extends State<MyPage> {
                   const SizedBox(height: 10),
                   UserInfoItem(
                     icon: Icons.home,
-                    label: "Hostel",
+                    label: "College",
                     value: userData['basicInfo']['hostel'],
                   ),
                   const SizedBox(height: 50),
