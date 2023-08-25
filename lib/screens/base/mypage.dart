@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:iitj_travel/screens/base/contact_us.dart';
 import 'package:iitj_travel/screens/onboarding/matching_condition.dart';
 import '../auth/main_screen.dart';
 import '../auth/shared_preference_services.dart';
@@ -270,14 +271,12 @@ class _MyPageState extends State<MyPage> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  ElevatedButton(
+                  ElevatedButton.icon(
                     onPressed: () {
-                      // Navigate to MatchingCondition screen
+                      // Navigate to ContactUsPage
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const MatchingCondition(),
-                        ),
+                        MaterialPageRoute(builder: (context) => ContactUsPage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -290,7 +289,16 @@ class _MyPageState extends State<MyPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
+                    icon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.email,
+                          //color: Colors.white,
+                        ),
+                      ],
+                    ),
+                    label: Text(
                       "Contact Us",
                       style: TextStyle(
                         fontSize: 16,

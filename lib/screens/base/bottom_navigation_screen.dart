@@ -20,6 +20,7 @@ class BottomNavigationScreen extends StatefulWidget {
 }
 
 class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
+
   int _selectedIndex = 0;
   bool clearButton=false;
   static final List<Widget> _widgetOptions = <Widget>[
@@ -61,12 +62,6 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       ),
     );
   }
-  final Map<int, Color> tabColors = {
-    0: Color.fromRGBO(17, 86, 149, 1),   // Travellers
-    1: Colors.purple, // Requests
-    2: Colors.indigoAccent,  // Messages
-    3: Colors.deepOrange, // My Page
-  };
 
   String? selectedSource;
   String? selectedDestination;
@@ -266,18 +261,34 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
         floatingActionButton: _selectedIndex == 0
-            ? FloatingActionButton(
+            ? ElevatedButton(
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MyCard()
+                builder: (context) => MyCard(),
               ),
             );
             // Handle the action when the button is pressed
           },
-          child: Icon(Icons.add), // Plus icon
-          backgroundColor: Color.fromRGBO(17, 86, 149, 1), // Button color
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "My Card",
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            primary:Color.fromRGBO(14, 77, 141, 1.0), // Button color
+            elevation: 15,
+            padding: EdgeInsets.symmetric(
+              horizontal: 15,
+              vertical: 10,
+            ),// Elevation for the button
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30), // Rounded corners
+            ),
+          ),
         )
             : null,
 
@@ -302,7 +313,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: tabColors[_selectedIndex] ?? Colors.black,
+          selectedItemColor: Color.fromRGBO(17, 86, 149, 1),
           unselectedItemColor: Colors.grey,
           onTap: _onItemTapped,
           showUnselectedLabels: true,
@@ -311,6 +322,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
     );
   }
 }
+
 
 
 
