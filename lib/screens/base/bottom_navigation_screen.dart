@@ -13,31 +13,44 @@ import 'package:flutter/services.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
   final bool clearButton;
-
   BottomNavigationScreen({required this.clearButton});
   @override
   _BottomNavigationScreenState createState() => _BottomNavigationScreenState();
+
 }
 
 class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
-
+  late final String currentUserUid;
   int _selectedIndex = 0;
   bool clearButton=false;
-  static final List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(selectedSource: null,
+  late List<Widget> _widgetOptions;
+
+  @override
+  void initState() {
+    super.initState();
+    this.clearButton = widget.clearButton;
+    currentUserUid = FirebaseAuth.instance.currentUser!.uid; // Assign it here
+
+    _widgetOptions = <Widget>[
+      HomeScreen(
+        selectedSource: null,
         selectedDestination: null,
         selectedDate: null,
-        isDateSelected: false),
-    RequestManagementPage(),
-    MessagesPage(),
-    MyPage(),
-  ];
+        isDateSelected: false,
+      ),
+      RequestManagementPage(),
+      RequestsEstablishedPage(currentUserUid: currentUserUid), // Use it here
+      CommunicationTab(),
+      MyPage(),
+    ];
+  }
 
   static final List<String> _appBarTitles = <String>[
     'Commuters',
     'Request Management',
+    'Confirmed Travels',
     'Messages',
-    'My Page',
+    'Profile',
   ];
 
   void _onItemTapped(int index) {
@@ -201,12 +214,6 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
     );
   }
 
-
-  @override
-  void initState() {
-    super.initState();
-    this.clearButton = widget.clearButton;
-  }
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
@@ -304,12 +311,16 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
               label: 'Requests',
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.done),
+              label: 'My Trips',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.message),
               label: 'Messages',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
-              label: 'My Page',
+              label: 'Profile',
             ),
           ],
           currentIndex: _selectedIndex,
@@ -320,43 +331,6 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
         ),
       ),
     );
-  }
-}
-
-
-
-
-
-class MessagesPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
-    return DefaultTabController(
-      length: 2, // Number of tabs
-      child: Column(
-        children: [
-          TabBar(
-            tabs: [
-              Tab(text: 'Established Travel'),
-              Tab(text: 'Communication'),
-            ],
-            labelColor: Color.fromRGBO(17, 86, 149, 1), // Selected tab text color
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                // Widget for "Established Travel" tab
-                RequestsEstablishedPage(currentUserUid: currentUserUid),
-
-                // Widget for "Communication" tab
-                CommunicationTab(),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-
   }
 }
 

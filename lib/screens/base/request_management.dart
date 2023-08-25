@@ -6,6 +6,42 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
+void _showVacantSeatsInfo(BuildContext context, int vacantSeats) {
+  String message;
+  if (vacantSeats == 1) {
+    message = "There is currently $vacantSeats vacant seat available.";
+  } else if (vacantSeats <= 0) {
+    message = "There is currently no vacant seat available.";
+  } else {
+    message = "There are currently $vacantSeats vacant seats available.";
+  }
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: Text(message),
+        contentPadding: EdgeInsets.all(16), // Adjust padding as needed
+        actions: [
+          Center(
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "OK",
+                style: TextStyle(
+                  color: Color.fromRGBO(14, 77, 141, 1.0), // Your app's button color
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 Widget buildAvatar(BuildContext context, Map<String, dynamic> user) {
   String imageUrl = user['basicInfo']['image'];
   return GestureDetector(
@@ -171,6 +207,7 @@ class RequestsReceivedPage extends StatelessWidget {
               ),
             );
           }
+
           return ListView.builder(
             itemCount: requestsReceived.length,
             itemBuilder: (context, index) {
@@ -268,10 +305,10 @@ class RequestsReceivedPage extends StatelessWidget {
                                             Text(
                                               user['matchingConditions']['modeOfTravel'] == "Auto"
                                                   ? user['matchingConditions']['autoBooked'] == 1
-                                                  ? "Auto is booked"
+                                                  ? "I have booked an Auto"
                                                   : "Auto not booked yet"
                                                   : user['matchingConditions']['autoBooked'] == 1
-                                                  ? "Taxi is booked"
+                                                  ? "I have booked a Taxi"
                                                   : "Taxi not booked yet",
                                               style: TextStyle(
                                                 fontSize: 16,
@@ -283,25 +320,38 @@ class RequestsReceivedPage extends StatelessWidget {
                                           ],
                                         ),
                                         Row(
-                                          children: List.generate(user['matchingConditions']['vacantSeats'], (index) {
-                                            if (index < user['matchingConditions']['seatsFilled']) {
-                                              return ColorFiltered(
-                                                colorFilter: ColorFilter.mode(
-                                                  Colors.red, // Red color for filled seats
-                                                  BlendMode.srcIn,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: List.generate(
+                                                user['matchingConditions']['vacantSeats'],
+                                                    (index) {
+                                                  int reversedIndex = user['matchingConditions']['vacantSeats'] - index - 1;
+                                                  return ColorFiltered(
+                                                    colorFilter: ColorFilter.mode(
+                                                      reversedIndex < user['matchingConditions']['seatsFilled'] ? Colors.red : Colors.green,
+                                                      BlendMode.srcIn,
+                                                    ),
+                                                    child: Image.asset('assets/seat.png', width: 25, height: 25),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                _showVacantSeatsInfo(context, user['matchingConditions']['vacantSeats'] - user['matchingConditions']['seatsFilled']);
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.only(left: 2), // Adjust this value as needed
+                                                child: Icon(
+                                                  Icons.info,
+                                                  size: 20,
+                                                  color: Color.fromRGBO(14, 77, 141, 1.0),
                                                 ),
-                                                child: Image.asset('assets/seat.png', width: 25, height: 25),
-                                              );
-                                            } else {
-                                              return ColorFiltered(
-                                                colorFilter: ColorFilter.mode(
-                                                  Colors.green, // Green color for vacant seats
-                                                  BlendMode.srcIn,
-                                                ),
-                                                child: Image.asset('assets/seat.png', width: 25, height: 25),
-                                              );
-                                            }
-                                          }),
+                                              ),
+                                            ),
+                                          ],
                                         )
                                       ],
                                     ),
@@ -601,10 +651,10 @@ class RequestsSentPage extends StatelessWidget {
                                             Text(
                                               user['matchingConditions']['modeOfTravel'] == "Auto"
                                                   ? user['matchingConditions']['autoBooked'] == 1
-                                                  ? "Auto is booked"
+                                                  ? "I have booked an Auto"
                                                   : "Auto not booked yet"
                                                   : user['matchingConditions']['autoBooked'] == 1
-                                                  ? "Taxi is booked"
+                                                  ? "I have booked a Taxi"
                                                   : "Taxi not booked yet",
                                               style: TextStyle(
                                                 fontSize: 16,
@@ -616,25 +666,38 @@ class RequestsSentPage extends StatelessWidget {
                                           ],
                                         ),
                                         Row(
-                                          children: List.generate(user['matchingConditions']['vacantSeats'], (index) {
-                                            if (index < user['matchingConditions']['seatsFilled']) {
-                                              return ColorFiltered(
-                                                colorFilter: ColorFilter.mode(
-                                                  Colors.red, // Red color for filled seats
-                                                  BlendMode.srcIn,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: List.generate(
+                                                user['matchingConditions']['vacantSeats'],
+                                                    (index) {
+                                                  int reversedIndex = user['matchingConditions']['vacantSeats'] - index - 1;
+                                                  return ColorFiltered(
+                                                    colorFilter: ColorFilter.mode(
+                                                      reversedIndex < user['matchingConditions']['seatsFilled'] ? Colors.red : Colors.green,
+                                                      BlendMode.srcIn,
+                                                    ),
+                                                    child: Image.asset('assets/seat.png', width: 25, height: 25),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                _showVacantSeatsInfo(context, user['matchingConditions']['vacantSeats'] - user['matchingConditions']['seatsFilled']);
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.only(left: 2), // Adjust this value as needed
+                                                child: Icon(
+                                                  Icons.info,
+                                                  size: 20,
+                                                  color: Color.fromRGBO(14, 77, 141, 1.0),
                                                 ),
-                                                child: Image.asset('assets/seat.png', width: 25, height: 25),
-                                              );
-                                            } else {
-                                              return ColorFiltered(
-                                                colorFilter: ColorFilter.mode(
-                                                  Colors.green, // Green color for vacant seats
-                                                  BlendMode.srcIn,
-                                                ),
-                                                child: Image.asset('assets/seat.png', width: 25, height: 25),
-                                              );
-                                            }
-                                          }),
+                                              ),
+                                            ),
+                                          ],
                                         )
                                       ],
                                     ),

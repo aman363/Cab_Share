@@ -51,116 +51,110 @@ class _ContactUsPageState extends State<ContactUsPage> {
         title: Text("Contact Us"),
         backgroundColor: Color.fromRGBO(17, 86, 149, 1),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "We'd love to hear from you",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Whether you have a question about features, or anything else, we are ready to answer all your questions",
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Padding(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
               padding: EdgeInsets.all(16),
-              child: Stack(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Text(
+                    "We'd love to hear from you",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Whether you have a question about features, or anything else, we are ready to answer all your questions",
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: MouseRegion(
-                              cursor: SystemMouseCursors.click,
-
-                              child: GestureDetector(
-                                onTap: () {
-                                  _launchURL('tel:$_phoneNumber');
-                                },
-                                child: _ContactInfoContainer(
-                                  icon: Icons.phone,
-                                  text: _phoneNumber,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: MouseRegion(
-                              cursor: SystemMouseCursors.click,
-
-                              child: GestureDetector(
-                                onTap: () {
-                                  _launchURL('mailto:$_email');
-                                },
-                                child: _ContactInfoContainer(
-                                  icon: Icons.email,
-                                  text: _email,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        "Feedback:",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 10),
-                      Column(
-                        children: [
-                          Stack(
-                            alignment: Alignment.bottomLeft,
-                            children: [
-                              TextField(
-                                controller: _feedbackController,
-                                maxLines: 5,
-                                maxLength: maxWordLimit,
-                                decoration: InputDecoration(
-                                  hintText: "Write your feedback here...",
-                                  border: OutlineInputBorder(),
-                                ),
-                              ),
-                            ],
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              await _submitFeedback();
+                      Expanded(
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: GestureDetector(
+                            onTap: () {
+                              _launchURL('tel:$_phoneNumber');
                             },
-                            style: ElevatedButton.styleFrom(
-                              primary: Color.fromRGBO(17, 86, 149, 1),
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              "Submit",
-                              style: TextStyle(fontSize: 16),
+                            child: _ContactInfoContainer(
+                              icon: Icons.phone,
+                              text: _phoneNumber,
                             ),
                           ),
-                        ],
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: GestureDetector(
+                            onTap: () {
+                              _launchURL('mailto:$_email');
+                            },
+                            child: _ContactInfoContainer(
+                              icon: Icons.email,
+                              text: _email,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
+                  SizedBox(height: 20),
+                  Text(
+                    "Feedback:",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Column(
+                    children: [
+                      Stack(
+                        alignment: Alignment.bottomLeft,
+                        children: [
+                          TextField(
+                            controller: _feedbackController,
+                            maxLines: 5,
+                            maxLength: maxWordLimit,
+                            decoration: InputDecoration(
+                              hintText: "Write your feedback here...",
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await _submitFeedback();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Color.fromRGBO(17, 86, 149, 1),
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          "Submit",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height:40),// Spacer to push icons to the bottom
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -191,8 +185,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

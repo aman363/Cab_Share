@@ -6,6 +6,7 @@ import '../reusable_widgets.dart';
 import '../auth/shared_preference_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitj_travel/screens/base/bottom_navigation_screen.dart';
+import 'package:flutter/services.dart';
 
 
 
@@ -42,40 +43,37 @@ class _MainScreenState extends State<MainScreen> {
   @override
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.white,
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        //decoration: const BoxDecoration(image: DecorationImage(image: AssetImage("assets/images/front_new.png"), fit: BoxFit.cover),),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                20, MediaQuery.of(context).size.height * 0.30, 20, 0),
-            child: Column(
-              children: <Widget>[
-                Image.asset(
-                  'assets/cab-share-logo.png',
-                  scale: 2.1,),
-
-                const SizedBox(height: 120),
-                firebaseUIButton(context, "Register", () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpScreen()));
-                }),
-                Btn(context, "Login", () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
-
-
-
-                }),
-              ],
-
-
+    return WillPopScope(
+      onWillPop: () async {
+        // Handle the mobile back button press
+        SystemNavigator.pop();
+        return true; // Allow the app to exit
+      },
+      child: Scaffold(
+        body: Container(
+          color: Colors.white,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                  20, MediaQuery.of(context).size.height * 0.30, 20, 0),
+              child: Column(
+                children: <Widget>[
+                  Image.asset('assets/cab-share-logo.png', scale: 2.1),
+                  const SizedBox(height: 120),
+                  firebaseUIButton(context, "Register", () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpScreen()));
+                  }),
+                  Btn(context, "Login", () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
+                  }),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
-
   }
 }

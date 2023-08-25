@@ -9,6 +9,12 @@ import './reset_password.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../auth/shared_preference_services.dart';
 
+enum _LoginStatus {
+  Initial,
+  LoggingIn,
+  LoggedIn,
+  Error,
+}
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -18,6 +24,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  _LoginStatus loginStatus = _LoginStatus.Initial;
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
   String sr = "";
@@ -43,14 +50,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(color: Colors.black),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
 
-      ),
-      body: Container(
+    return Scaffold(
+
+      body: Stack(
+    children: [
+      Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         child: SingleChildScrollView(
@@ -60,6 +65,9 @@ class _SignInScreenState extends State<SignInScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                const SizedBox(
+                  height: 80,
+                ),
                 Center(
 
                   child: Text(
@@ -115,10 +123,13 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
 
                 forgetPassword(context),
-                const SizedBox(height: 333),
+                const SizedBox(height: 3),
 
 
                 firebaseUIButton(context, "Login", ()  {
+                  setState(() {
+                    loginStatus = _LoginStatus.LoggingIn;
+                  });
                   String username = _emailTextController.text;
                   String password = _passwordTextController.text;
                   FirebaseAuth.instance
@@ -152,6 +163,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       if(fetchedData!['basicInfo']['name'].isEmpty){
                         flag=true;
                       }
+                      setState(() {
+                        loginStatus = _LoginStatus.LoggedIn;
+                      });
                       // ignore: use_build_context_synchronously
                       await Navigator.push(
                           context,
@@ -185,6 +199,31 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
           ),
         ),
+      ),
+      if (loginStatus == _LoginStatus.LoggingIn)
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.black.withOpacity(0.5), // Translucent background color
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 10),
+                Text(
+                  "Logging In...",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+    ],
       ),
     );
   }
@@ -226,3 +265,6 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 }
+
+
+
