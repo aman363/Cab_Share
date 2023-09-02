@@ -88,6 +88,55 @@ class _HomeScreenState extends State<HomeScreen> {
                         user['matchingConditions']['vacantSeats'])
                     .toList();
                 String formattedSelectedDate = "${selectedDate?.day.toString().padLeft(2, '0')}-${selectedDate?.month.toString().padLeft(2, '0')}-${selectedDate?.year}";
+                // Sorting matchingUsers by date and time in ascending order
+                matchingUsers.sort((user1, user2) {
+                  String dateStr1 = user1['matchingConditions']['date'];
+                  String timeStr1 = user1['matchingConditions']['time'];
+                  String dateStr2 = user2['matchingConditions']['date'];
+                  String timeStr2 = user2['matchingConditions']['time'];
+
+                  // Parse the date strings into DateTime objects
+                  DateTime date1 = DateTime.parse(
+                      "${dateStr1.split('-')[2]}-${dateStr1.split('-')[1]}-${dateStr1.split('-')[0]}");
+                  DateTime date2 = DateTime.parse(
+                      "${dateStr2.split('-')[2]}-${dateStr2.split('-')[1]}-${dateStr2.split('-')[0]}");
+
+                  // Manually parse the time strings into DateTime objects
+                  DateTime dateTime1 = DateTime(
+                    date1.year,
+                    date1.month,
+                    date1.day,
+                    int.parse(timeStr1.split(':')[0]), // Hours
+                    int.parse(timeStr1.split(':')[1].split(' ')[0]), // Minutes
+                  );
+
+                  if (timeStr1.split(' ')[1] == 'PM' && timeStr1 != '12:00 PM') {
+                    dateTime1 = dateTime1.add(Duration(hours: 12)); // Add 12 hours for PM
+                  }
+
+                  DateTime dateTime2 = DateTime(
+                    date2.year,
+                    date2.month,
+                    date2.day,
+                    int.parse(timeStr2.split(':')[0]), // Hours
+                    int.parse(timeStr2.split(':')[1].split(' ')[0]), // Minutes
+                  );
+
+                  if (timeStr2.split(' ')[1] == 'PM' && timeStr2 != '12:00 PM') {
+                    dateTime2 = dateTime2.add(Duration(hours: 12)); // Add 12 hours for PM
+                  }
+
+                  // Compare by date and time
+                  int dateComparison = dateTime1.compareTo(dateTime2);
+
+                  // If the dates are the same, compare by AM/PM
+                  if (dateComparison == 0) {
+                    return timeStr1.split(' ')[1].compareTo(timeStr2.split(' ')[1]);
+                  }
+
+                  return dateComparison;
+                });
+
 
                 if (selectedSource != null && selectedDestination != null && isDateSelected!= false) {
                   matchingUsers = matchingUsers.where((user) =>
@@ -131,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            "Here you will see all the travel cards,\nYou can make your own with the addition button",
+                            "Here you will see all the travel cards,\nYou can make your own with the My Card button",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey,

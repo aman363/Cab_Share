@@ -462,7 +462,10 @@ class CommunicationTab extends StatelessWidget {
 
                         String formattedTime = _formatTimestamp(mostRecentMessageTime);
 
-                        return ListTile(
+                        return Card( // Wrap the ListTile with a Card
+                            elevation: 2, // Set the elevation for the shadow
+                            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: ListTile(
                           title: Text(userName),
                           subtitle: Text(mostRecentMessage),
                           trailing: Text(formattedTime),
@@ -482,6 +485,7 @@ class CommunicationTab extends StatelessWidget {
                               ),
                             );
                           },
+                            ),
                         );
                       },
                     );

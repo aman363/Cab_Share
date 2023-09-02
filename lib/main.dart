@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iitj_travel/screens/auth/main_screen.dart';
 import './screens/auth/shared_preference_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,6 +12,12 @@ void main() async {
     appId: "1:372277714565:android:15d444a918dff6a65453ec",
     messagingSenderId: "372277714565",
     projectId: "iitj-travel-e12d2", ), );
+
+  await FirebaseAppCheck.instance.activate(
+    webRecaptchaSiteKey: 'recaptcha-v3-site-key',
+
+    androidProvider: AndroidProvider.debug,
+  );
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   SharedPreferences prefs = await SharedPreferences.getInstance();

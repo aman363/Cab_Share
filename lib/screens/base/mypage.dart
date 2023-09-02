@@ -46,12 +46,14 @@ class _MyPageState extends State<MyPage> {
                   Navigator.of(context).pop();
                   final pickedFile = await _picker.pickImage(
                     source: ImageSource.camera,
+                    imageQuality: 30,
                   );
                   if (pickedFile != null) {
                     _uploadAndSetImage(File(pickedFile.path));
                   }
                 },
-                child: Text('Upload from Camera', style: TextStyle(color: Colors.black,fontSize: 16)),
+                child: Text('Upload from Camera',
+                    style: TextStyle(color: Colors.black, fontSize: 16)),
               ),
               Divider(
                 color: Colors.grey, // Add a line divider between buttons
@@ -64,19 +66,40 @@ class _MyPageState extends State<MyPage> {
                   Navigator.of(context).pop();
                   final pickedFile = await _picker.pickImage(
                     source: ImageSource.gallery,
+                    imageQuality: 30,
                   );
                   if (pickedFile != null) {
                     _uploadAndSetImage(File(pickedFile.path));
                   }
                 },
-                child: Text('Upload from Gallery', style: TextStyle(color: Colors.black,fontSize: 16)),
+                child: Text('Upload from Gallery',
+                    style: TextStyle(color: Colors.black, fontSize: 16)),
               ),
+              if (imageUrl != "")
+                Column(
+                  children: [
+                    Divider(
+                      color: Colors.grey, // Add a line divider between buttons
+                      height: 0, // Standard height for divider
+                      thickness: 1, // Thickness of the line
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _removeImage();
+                      },
+                      child: Text('Remove Photo',
+                          style: TextStyle(color: Colors.red, fontSize: 16)),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
       ],
     );
   }
+
 
   Future<void> _uploadAndSetImage(File imageFile) async {
     // Upload the image to Firebase Storage
@@ -85,7 +108,12 @@ class _MyPageState extends State<MyPage> {
     firebase_storage.Reference storageRef =
     firebase_storage.FirebaseStorage.instance.ref().child('ProfileImage').child(imageName);
 
-    final uploadTask = storageRef.putFile(imageFile);
+    final uploadTask = storageRef.putFile(
+      imageFile,
+      firebase_storage.SettableMetadata(
+        contentType: 'image/jpeg', // Set the content type to JPEG
+      ),
+    );
     await uploadTask;
 
     imageUrl = await storageRef.getDownloadURL();
@@ -99,6 +127,8 @@ class _MyPageState extends State<MyPage> {
     setState(() {}); // Refresh the UI
   }
 
+
+
   Future<Map<String, dynamic>> fetchUserData(String uid) async {
     DocumentSnapshot userSnapshot =
     await FirebaseFirestore.instance.collection("Profile").doc(uid).get();
@@ -109,8 +139,28 @@ class _MyPageState extends State<MyPage> {
     }
   }
 
+  void _removeImage() async {
+    // Remove the image from Firebase Storage
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    String imageName = 'profile_image_$uid.jpg';
+    firebase_storage.Reference storageRef =
+    firebase_storage.FirebaseStorage.instance.ref().child('ProfileImage').child(imageName);
+
+    await storageRef.delete();
+
+    // Update the user's data to remove the image URL
+    await FirebaseFirestore.instance
+        .collection("Profile")
+        .doc(uid)
+        .update({'basicInfo.image': ""});
+
+    imageUrl = "";
+
+    setState(() {}); // Refresh the UI
+  }
+
   CircleAvatar buildCircleAvatar(String imageUrl, String currentUserName) {
-    if (imageUrl.isEmpty) {
+    if (imageUrl == "" || imageUrl.isEmpty) {
       return CircleAvatar(
         radius: 50,
         backgroundColor: Colors.grey,
@@ -128,6 +178,7 @@ class _MyPageState extends State<MyPage> {
       );
     }
   }
+
 
 
   @override
