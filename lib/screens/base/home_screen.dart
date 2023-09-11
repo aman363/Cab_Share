@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitj_travel/services/notification_services.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? selectedSource;
@@ -34,10 +36,47 @@ class _HomeScreenState extends State<HomeScreen> {
   late String? selectedDestination;
   late DateTime? selectedDate;
   late bool? isDateSelected;
+  late Timer updateTimer;
 
   @override
   void initState() {
     super.initState();
+    // Create a Timer that checks for updates periodically (e.g., every minute)
+    updateTimer = Timer.periodic(Duration(minutes: 1), (timer) {
+      // Get the current date and time
+      DateTime now = DateTime.now();
+
+      // Iterate through the matchingUsers list and check each user's matchingConditions
+      for (var user in matchingUsers) {
+        // Parse the user's matchingConditions date and time into DateTime objects
+        DateTime matchingDate = DateFormat("dd-MM-yyyy hh:mm a").parse(
+          "${user['matchingConditions']['date']} ${user['matchingConditions']['time']}",
+        );
+
+        // Compare the current date and time with the user's matchingConditions
+        if (now.isAfter(matchingDate)) {
+          // Perform the update for this user
+          updateMatchingConditions(user);
+        }
+      }
+      FirebaseFirestore.instance.collection("Profile").doc(currentUserUid).get().then((userDoc) {
+        if (userDoc.exists) {
+          // Extract the user data
+          Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+          // Parse the current user's matchingConditions date and time into DateTime objects
+          DateTime currentUserMatchingDate = DateFormat("dd-MM-yyyy hh:mm a").parse(
+            "${userData['matchingConditions']['date']} ${userData['matchingConditions']['time']}",
+          );
+
+          // Compare the current date and time with the current user's matchingConditions
+          if (now.isAfter(currentUserMatchingDate)) {
+            // Perform the update for the current user
+            updateMatchingConditions(userData);
+          }
+        }
+      });
+    });
     currentUserUid = FirebaseAuth.instance.currentUser!.uid;
     notificationServices.requestNotificationPermission();
     notificationServices.firebaseInit(context);
@@ -51,6 +90,37 @@ class _HomeScreenState extends State<HomeScreen> {
     selectedDestination = widget.selectedDestination; // Assign the values here
     selectedDate = widget.selectedDate; // Assign the values here
     isDateSelected = widget.isDateSelected;
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    // Cancel the Timer when the widget is disposed to prevent memory leaks
+    updateTimer.cancel();
+  }
+
+  void updateMatchingConditions(Map<String, dynamic> user) {
+    // Extract the user's ID
+    String userId = user['uid'];
+
+    // Update Firestore document for the specific user
+    FirebaseFirestore.instance.collection("Profile").doc(userId).update({
+      'matchingConditions': {
+        'date': "", // Update with the new date
+        'time': "", // Update with the new time
+        'source': "", // Update with the new source
+        'destination': "", // Update with the new destination
+        'autoBooked': 0, // Update with the new autoBooked value
+        'vacantSeats': 0, // Update with the new vacantSeats value
+        'seatsFilled': 0, // Update with the new seatsFilled value
+        'modeOfTravel': "", // Update with the new modeOfTravel
+      },
+    }).then((_) {
+      // Successfully updated the document
+      print('MatchingConditions updated for user with ID: $userId');
+    }).catchError((error) {
+      // Handle any errors that occur during the update
+      print('Error updating MatchingConditions: $error');
+    });
   }
 
   @override

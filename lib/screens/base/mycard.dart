@@ -20,6 +20,46 @@ class MyCard extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var user = snapshot.data!.data() as Map<String, dynamic>;
+
+              // Check if the specified conditions are met
+              if (user != null &&
+                  user['matchingConditions'] != null &&
+                  user['matchingConditions']['source'] != null &&
+                  user['matchingConditions']['seatsFilled'] <
+                      user['matchingConditions']['vacantSeats']) {
+                // Show a snackbar based on the conditions
+                WidgetsBinding.instance!.addPostFrameCallback((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Your card is visible to others"),
+                      duration: Duration(seconds: 5), // Set a long duration for permanent display
+                      action: SnackBarAction(
+                        label: 'OK',
+                        onPressed: () {
+                          // Add any action here if needed
+                        },
+                      ),
+                    ),
+                  );
+                });
+              }
+              else{
+                WidgetsBinding.instance!.addPostFrameCallback((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Your card is not visible to others"),
+                      duration: Duration(seconds: 5), // Set a long duration for permanent display
+                      action: SnackBarAction(
+                        label: 'OK',
+                        onPressed: () {
+                          // Add any action here if needed
+                        },
+                      ),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                });
+              }
               return Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
@@ -211,7 +251,7 @@ class MyCard extends StatelessWidget {
                                       });
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                          content: Text("Matching conditions discarded"),
+                                          content: Text("Travel details discarded"),
                                           backgroundColor: Colors.red,
                                         ),
                                       );

@@ -13,12 +13,6 @@ void main() async {
     messagingSenderId: "372277714565",
     projectId: "iitj-travel-e12d2", ), );
 
-  await FirebaseAppCheck.instance.activate(
-    webRecaptchaSiteKey: 'recaptcha-v3-site-key',
-
-    androidProvider: AndroidProvider.debug,
-  );
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
