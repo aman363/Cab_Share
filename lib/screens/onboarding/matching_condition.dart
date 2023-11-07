@@ -223,50 +223,10 @@ class _MatchingConditionState extends State<MatchingCondition> {
               ),
             ),
             SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-              value: _selectedModeOfTravel,
-              hint: Text('Preferred Mode of Travel'),
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedModeOfTravel = newValue;
-                });
-              },
-              items: ['Auto', 'Taxi'].map((mode) {
-                return DropdownMenuItem<String>(
-                  value: mode,
-                  child: Text(mode),
-                );
-              }).toList(),
-              decoration: InputDecoration(
-                labelText: 'Preferred Mode of Travel',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
-            DropdownButtonFormField<int>(
-              value: _selectedVacantSeats,
-              hint: Text('Number of Vacant Seats'),
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedVacantSeats = newValue;
-                });
-              },
-              items: [1, 2, 3, 4].map((seats) {
-                return DropdownMenuItem<int>(
-                  value: seats,
-                  child: Text(seats.toString()),
-                );
-              }).toList(),
-              decoration: InputDecoration(
-                labelText: 'Number of Vacant Seats',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
             Row(
               children: [
                 Text(
-                  'Auto/Taxi Booked:',
+                  'Have you booked Auto/Cab?',
                   style: TextStyle(fontSize: 16),
                 ),
                 SizedBox(width: 10),
@@ -282,15 +242,55 @@ class _MatchingConditionState extends State<MatchingCondition> {
               ],
             ),
             SizedBox(height: 20),
+            DropdownButtonFormField<String>(
+              value: _selectedModeOfTravel,
+              hint: Text(_autoBooked == false ? 'Preferred Mode of Travel' : 'Mode of Travel'),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedModeOfTravel = newValue;
+                });
+              },
+              items: ['Auto', 'Taxi'].map((mode) {
+                return DropdownMenuItem<String>(
+                  value: mode,
+                  child: Text(mode),
+                );
+              }).toList(),
+              decoration: InputDecoration(
+                labelText: _autoBooked == false ? 'Preferred Mode of Travel' : 'Mode of Travel',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            DropdownButtonFormField<int>(
+              value: _selectedVacantSeats,
+              hint: Text(_autoBooked == false ? 'Preferred Number of Travel Companions' : 'Vacant Seats'),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedVacantSeats = newValue;
+                });
+              },
+              items: [1, 2, 3].map((seats) {
+                return DropdownMenuItem<int>(
+                  value: seats,
+                  child: Text(seats.toString()),
+                );
+              }).toList(),
+              decoration: InputDecoration(
+                labelText: _autoBooked == false ? 'Preferred Number of Travel Companions' : 'Vacant Seats',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
             Spacer(),
-            firebaseUIButton(context, 'Find Partners', () {
+            firebaseUIButton(context, 'Find Commuters', () {
               if (canContinue) {
                 String userId = FirebaseAuth.instance.currentUser!.uid;
                 updateUserMatchingConditions(userId);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BottomNavigationScreen(clearButton :false),
+                    builder: (context) => BottomNavigationScreen(clearButton :false,selectedIndex: 0),
                   ),
                 );
 
@@ -317,11 +317,11 @@ class _MatchingConditionState extends State<MatchingCondition> {
               }
             }),
             SizedBox(height: 5),
-            Btn(context, 'Later', () {
+            Btn(context, 'I will Travel Later', () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => BottomNavigationScreen(clearButton:false),
+                  builder: (context) => BottomNavigationScreen(clearButton:false,selectedIndex: 0),
                 ),
               );
             }),

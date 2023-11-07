@@ -123,13 +123,14 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
 
                 forgetPassword(context),
-                const SizedBox(height: 3),
+                const SizedBox(height: 10),
 
 
                 firebaseUIButton(context, "Login", ()  {
-                  setState(() {
-                    loginStatus = _LoginStatus.LoggingIn;
-                  });
+                    setState(() {
+                      loginStatus = _LoginStatus.LoggingIn;
+                    });
+
                   String username = _emailTextController.text;
                   String password = _passwordTextController.text;
                   FirebaseAuth.instance
@@ -171,7 +172,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => flag
-                                  ? OnboardingScreen() : BottomNavigationScreen(clearButton:false)));
+                                  ? OnboardingScreen() : BottomNavigationScreen(clearButton:false,selectedIndex: 0)));
                     }
                   }).onError((error, stackTrace) {
                     print(error.toString());
@@ -180,20 +181,30 @@ class _SignInScreenState extends State<SignInScreen> {
                       setState(() {
                         sr = "*Password does not match";
                       });
+                      setState(() {
+                        loginStatus = _LoginStatus.Initial;
+                      });
                     }
                     if (error.toString() ==
                         "[firebase_auth/user-not-found] There is no user record corresponding to this identifier. The user may have been deleted.") {
                       setState(() {
                         sr = "*User Not Found";
                       });
+                      setState(() {
+                        loginStatus = _LoginStatus.Initial;
+                      });
                     }
                     else if (error.toString() =="[firebase_auth/invalid-email] The email address is badly formatted."){
                       setState(() {
                         sr = "*The email address is badly formatted";
                       });
+                      setState(() {
+                        loginStatus = _LoginStatus.Initial;
+                      });
                     }
                   });
                 }),
+                const SizedBox(height: 5),
                 signUpOption()
               ],
             ),
@@ -232,7 +243,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Don't Have Account",
+        Text("Don't Have Account?",
             style: TextStyle(color: Colors.black)),
         GestureDetector(
           onTap: () {
@@ -240,7 +251,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 MaterialPageRoute(builder: (context) => const SignUpScreen()));
           },
           child: Text(
-            "Sign Up",
+            " Sign Up",
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
         )

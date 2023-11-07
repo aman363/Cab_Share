@@ -47,7 +47,7 @@ class MyCard extends StatelessWidget {
                 WidgetsBinding.instance!.addPostFrameCallback((_) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text("Your card is not visible to others"),
+                      content: Text("Your card is not visible to others, UPDATE!"),
                       duration: Duration(seconds: 5), // Set a long duration for permanent display
                       action: SnackBarAction(
                         label: 'OK',

@@ -127,7 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 290),
+                    const SizedBox(height: 10),
                     firebaseUIButton(context, "Send Confirmation link",
                             () async {
 

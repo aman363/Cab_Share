@@ -13,7 +13,8 @@ import 'package:flutter/services.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
   final bool clearButton;
-  BottomNavigationScreen({required this.clearButton});
+  final int selectedIndex; // Add this parameter
+  BottomNavigationScreen({required this.clearButton, required this.selectedIndex});
   @override
   _BottomNavigationScreenState createState() => _BottomNavigationScreenState();
 
@@ -21,8 +22,8 @@ class BottomNavigationScreen extends StatefulWidget {
 
 class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   late final String currentUserUid;
-  int _selectedIndex = 0;
   bool clearButton=false;
+  late int selectedIndex;
   late List<Widget> _widgetOptions;
 
   @override
@@ -30,7 +31,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
     super.initState();
     this.clearButton = widget.clearButton;
     currentUserUid = FirebaseAuth.instance.currentUser!.uid; // Assign it here
-
+    this.selectedIndex = widget.selectedIndex;
     _widgetOptions = <Widget>[
       HomeScreen(
         selectedSource: null,
@@ -55,7 +56,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
   }
 
@@ -71,7 +72,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BottomNavigationScreen(clearButton: false),
+        builder: (context) => BottomNavigationScreen(clearButton: false,selectedIndex: 0),
       ),
     );
   }
@@ -193,7 +194,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BottomNavigationScreen(clearButton:true),
+                        builder: (context) => BottomNavigationScreen(clearButton:true,selectedIndex: 0),
                       ),
                     );
 
@@ -217,10 +218,10 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (_selectedIndex != 0) {
+        if (selectedIndex != 0) {
           // If not in the "Commuters" tab, navigate to the "Commuters" tab
           setState(() {
-            _selectedIndex = 0;
+            selectedIndex = 0;
           });
           return false; // Prevent default back button behavior
         }else {
@@ -232,10 +233,10 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false, // Disable back button
-          title: Text(_appBarTitles[_selectedIndex]),
+          title: Text(_appBarTitles[selectedIndex]),
           backgroundColor: Color.fromRGBO(17, 86, 149, 1),
           actions: [
-            if (_selectedIndex == 0)
+            if (selectedIndex == 0)
               if (clearButton == true)
                   ElevatedButton.icon(
                     onPressed: clearFilters,
@@ -265,9 +266,9 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           ],
         ),
         body: Center(
-          child: _widgetOptions.elementAt(_selectedIndex),
+          child: _widgetOptions.elementAt(selectedIndex),
         ),
-        floatingActionButton: _selectedIndex == 0
+        floatingActionButton: selectedIndex == 0
             ? ElevatedButton(
           onPressed: () {
             Navigator.push(
@@ -323,7 +324,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
               label: 'Profile',
             ),
           ],
-          currentIndex: _selectedIndex,
+          currentIndex: selectedIndex,
           selectedItemColor: Color.fromRGBO(17, 86, 149, 1),
           unselectedItemColor: Colors.grey,
           onTap: _onItemTapped,

@@ -41,6 +41,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    selectedSource = widget.selectedSource; // Assign the values here
+    selectedDestination = widget.selectedDestination; // Assign the values here
+    selectedDate = widget.selectedDate; // Assign the values here
+    isDateSelected = widget.isDateSelected;
     // Create a Timer that checks for updates periodically (e.g., every minute)
     updateTimer = Timer.periodic(Duration(minutes: 1), (timer) {
       // Get the current date and time
@@ -49,14 +53,17 @@ class _HomeScreenState extends State<HomeScreen> {
       // Iterate through the matchingUsers list and check each user's matchingConditions
       for (var user in matchingUsers) {
         // Parse the user's matchingConditions date and time into DateTime objects
-        DateTime matchingDate = DateFormat("dd-MM-yyyy hh:mm a").parse(
-          "${user['matchingConditions']['date']} ${user['matchingConditions']['time']}",
-        );
+        if (user['matchingConditions']['date'] != "" && user['matchingConditions']['time'] != "") {
+          // Parse the user's matchingConditions date and time into DateTime objects
+          DateTime matchingDate = DateFormat("dd-MM-yyyy hh:mm a").parse(
+            "${user['matchingConditions']['date']} ${user['matchingConditions']['time']}",
+          );
 
-        // Compare the current date and time with the user's matchingConditions
-        if (now.isAfter(matchingDate)) {
-          // Perform the update for this user
-          updateMatchingConditions(user);
+          // Compare the current date and time with the user's matchingConditions
+          if (now.isAfter(matchingDate)) {
+            // Perform the update for this user
+            updateMatchingConditions(user);
+          }
         }
       }
       FirebaseFirestore.instance.collection("Profile").doc(currentUserUid).get().then((userDoc) {
@@ -65,14 +72,18 @@ class _HomeScreenState extends State<HomeScreen> {
           Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
 
           // Parse the current user's matchingConditions date and time into DateTime objects
-          DateTime currentUserMatchingDate = DateFormat("dd-MM-yyyy hh:mm a").parse(
-            "${userData['matchingConditions']['date']} ${userData['matchingConditions']['time']}",
-          );
 
-          // Compare the current date and time with the current user's matchingConditions
-          if (now.isAfter(currentUserMatchingDate)) {
-            // Perform the update for the current user
-            updateMatchingConditions(userData);
+          if (userData['matchingConditions']['date'] != "" && userData['matchingConditions']['time'] != "") {
+            // Parse the current user's matchingConditions date and time into DateTime objects
+            DateTime currentUserMatchingDate = DateFormat("dd-MM-yyyy hh:mm a").parse(
+              "${userData['matchingConditions']['date']} ${userData['matchingConditions']['time']}",
+            );
+
+            // Compare the current date and time with the current user's matchingConditions
+            if (now.isAfter(currentUserMatchingDate)) {
+              // Perform the update for the current user
+              updateMatchingConditions(userData);
+            }
           }
         }
       });
@@ -86,10 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
         'fcmToken': value.toString(),
       });
     });
-    selectedSource = widget.selectedSource; // Assign the values here
-    selectedDestination = widget.selectedDestination; // Assign the values here
-    selectedDate = widget.selectedDate; // Assign the values here
-    isDateSelected = widget.isDateSelected;
   }
   @override
   void dispose() {
@@ -101,7 +108,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void updateMatchingConditions(Map<String, dynamic> user) {
     // Extract the user's ID
     String userId = user['uid'];
-
+    List<String> requestEstablished = List<String>.from(user['requestEstablished'] ?? []);
+    List<String> requestReceived = List<String>.from(user['requestReceived'] ?? []);
     // Update Firestore document for the specific user
     FirebaseFirestore.instance.collection("Profile").doc(userId).update({
       'matchingConditions': {
@@ -114,9 +122,29 @@ class _HomeScreenState extends State<HomeScreen> {
         'seatsFilled': 0, // Update with the new seatsFilled value
         'modeOfTravel': "", // Update with the new modeOfTravel
       },
+      'requestReceived':[],
+      'requestEstablished':[],
     }).then((_) {
       // Successfully updated the document
       print('MatchingConditions updated for user with ID: $userId');
+      for (String uid in requestEstablished) {
+        FirebaseFirestore.instance.collection("Profile").doc(uid).update({
+          'requestEstablished': FieldValue.arrayRemove([userId]), // Update the source to ""
+        }).then((_) {
+          print('Source updated to "" for user with ID: $uid');
+        }).catchError((error) {
+          print('Error updating source for user with ID: $uid - Error: $error');
+        });
+      }
+      for (String uid in requestReceived) {
+        FirebaseFirestore.instance.collection("Profile").doc(uid).update({
+          'requestSent': FieldValue.arrayRemove([userId]), // Update the source to ""
+        }).then((_) {
+          print('Source updated to "" for user with ID: $uid');
+        }).catchError((error) {
+          print('Error updating source for user with ID: $uid - Error: $error');
+        });
+      }
     }).catchError((error) {
       // Handle any errors that occur during the update
       print('Error updating MatchingConditions: $error');
@@ -206,8 +234,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   return dateComparison;
                 });
-
-
+                print('Selected Source: $selectedSource');
+                print('Selected Destination: $selectedDestination');
+                print('Selected Date: $selectedDate');
+                print('Is Date Selected: $isDateSelected');
                 if (selectedSource != null && selectedDestination != null && isDateSelected!= false) {
                   matchingUsers = matchingUsers.where((user) =>
                   user['matchingConditions']['source'] == selectedSource &&
